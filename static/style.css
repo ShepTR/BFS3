@@ -1,0 +1,42 @@
+.unit-card {
+    margin-bottom: 1rem;
+    padding: 0.5rem;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+}
+
+.unit-card img {
+    max-width: 100%;
+    height: auto;
+}
+
+.force-list-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.5rem;
+    margin-bottom: 0.5rem;
+    background-color: #f8f9fa;
+    border-radius: 4px;
+}
+
+.force-list-item button {
+    margin-left: 1rem;
+}
+
+#printView {
+    display: none;
+}
+
+@media print {
+    body > *:not(#printView) {
+        display: none;
+    }
+    #printView {
+        display: block;
+    }
+    .print-card {
+        page-break-inside: avoid;
+        margin-bottom: 1rem;
+    }
+} 

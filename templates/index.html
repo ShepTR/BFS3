@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BattleTech Force Builder</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="{{ url_for('static', filename='style.css') }}" rel="stylesheet">
+</head>
+<body>
+    <div class="container-fluid">
+        <div class="row">
+            <!-- Unit Selection Panel -->
+            <div class="col-md-4">
+                <div class="card">
+                    <div class="card-header">
+                        <h3>Unit Selection</h3>
+                    </div>
+                    <div class="card-body">
+                        <div class="mb-3">
+                            <label for="unitSelect" class="form-label">Select Unit</label>
+                            <select class="form-select" id="unitSelect">
+                                <option value="">Choose a unit...</option>
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Experience Level</label>
+                            <div class="form-check">
+                                <input class="form-check-input" type="radio" name="experience" id="regular" value="regular" checked>
+                                <label class="form-check-label" for="regular">Regular</label>
+                            </div>
+                            <div class="form-check">
+                                <input class="form-check-input" type="radio" name="experience" id="veteran" value="veteran">
+                                <label class="form-check-label" for="veteran">Veteran</label>
+                            </div>
+                        </div>
+                        <button class="btn btn-primary" id="addUnit">Add Unit</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Force List Panel -->
+            <div class="col-md-8">
+                <div class="card">
+                    <div class="card-header d-flex justify-content-between align-items-center">
+                        <h3>Your Force</h3>
+                        <div>
+                            <span class="badge bg-primary">BFS Total: <span id="totalPoints">0</span></span>
+                            <button class="btn btn-success ms-2" id="printForce">Print Force</button>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <div id="forceList" class="mb-4">
+                            <!-- Force units will be listed here -->
+                        </div>
+                        <div id="unitCards" class="row">
+                            <!-- Unit cards will be displayed here -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="{{ url_for('static', filename='script.js') }}"></script>
+</body>
+</html> 
