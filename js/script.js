@@ -185,29 +185,32 @@ function printForce() {
             <title>BattleTech Force Printout</title>
             <style>
                 @page {
-                    size: letter;
+                    size: letter portrait;
                     margin: 0.5in;
                 }
                 body {
                     font-family: Arial, sans-serif;
                     margin: 0;
                     padding: 0;
+                    width: 7.5in; /* 8.5in - 0.5in margins on each side */
                 }
                 .force-summary {
-                    margin-bottom: 1in;
+                    margin-bottom: 0.5in;
                 }
                 .force-summary h1 {
                     text-align: center;
-                    margin-bottom: 0.5in;
+                    margin-bottom: 0.25in;
+                    font-size: 18pt;
                 }
                 .force-summary table {
                     width: 100%;
                     border-collapse: collapse;
-                    margin-bottom: 0.5in;
+                    margin-bottom: 0.25in;
+                    font-size: 10pt;
                 }
                 .force-summary th, .force-summary td {
                     border: 1px solid #000;
-                    padding: 8px;
+                    padding: 4px 8px;
                     text-align: left;
                 }
                 .force-summary th {
@@ -216,49 +219,32 @@ function printForce() {
                 .cards-page {
                     page-break-before: always;
                     display: grid;
-                    grid-template-columns: repeat(3, 3.5in);
-                    grid-template-rows: repeat(3, 2.5in);
+                    grid-template-columns: repeat(3, 2.5in);
+                    grid-template-rows: repeat(3, 3.5in);
                     gap: 0;
-                    justify-content: center;
-                    align-items: center;
-                    padding: 0;
-                    width: 10.5in;
-                    height: 8in;
+                    width: 7.5in;
+                    height: 10.5in;
                 }
                 .card-container {
-                    width: 3.5in;
-                    height: 2.5in;
+                    width: 2.5in;
+                    height: 3.5in;
                     display: flex;
                     justify-content: center;
                     align-items: center;
-                    transform: rotate(-90deg);
-                    transform-origin: center;
                     overflow: hidden;
-                    margin: 0;
-                    padding: 0;
                 }
                 .card-container img {
-                    width: 100%;
-                    height: 100%;
+                    width: 2.5in;
+                    height: 3.5in;
                     object-fit: contain;
                 }
                 @media print {
-                    .no-print {
-                        display: none;
-                    }
-                    @page {
-                        size: letter;
-                        margin: 0;
-                    }
                     body {
-                        margin: 0;
-                        padding: 0;
+                        width: 7.5in;
                     }
                     .cards-page {
-                        margin: 0;
-                        padding: 0;
-                        width: 10.5in;
-                        height: 8in;
+                        width: 7.5in;
+                        height: 10.5in;
                     }
                 }
             </style>
@@ -269,9 +255,9 @@ function printForce() {
                 <table>
                     <thead>
                         <tr>
-                            <th>Unit</th>
-                            <th>Experience</th>
-                            <th>Points</th>
+                            <th style="width: 50%">Unit</th>
+                            <th style="width: 25%">Experience</th>
+                            <th style="width: 25%">Points</th>
                         </tr>
                     </thead>
                     <tbody>
