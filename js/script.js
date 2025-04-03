@@ -219,6 +219,8 @@ function printForce() {
                     display: flex;
                     justify-content: center;
                     align-items: center;
+                    transform: rotate(90deg);
+                    transform-origin: center;
                 }
                 .card img {
                     max-width: 100%;
