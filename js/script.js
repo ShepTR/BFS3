@@ -158,7 +158,7 @@ function updateCardsDisplay() {
     
     selectedUnits.forEach(unit => {
         const cardElement = document.createElement('div');
-        cardElement.className = 'col-md-4 unit-card';
+        cardElement.className = 'col-md-4 unit-card mb-3';
         
         const img = document.createElement('img');
         img.src = unit.cardPath;
