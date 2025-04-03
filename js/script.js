@@ -11,6 +11,7 @@ document.addEventListener('DOMContentLoaded', function() {
     document.getElementById('addUnit').addEventListener('click', addUnitToForce);
     document.getElementById('printForce').addEventListener('click', printForce);
     document.getElementById('unitSelect').addEventListener('change', updateCardPreview);
+    document.getElementById('maxPoints').addEventListener('input', updateForceDisplay);
 });
 
 // Populate the unit select dropdown
@@ -76,9 +77,26 @@ function addUnitToForce() {
 function updateForceDisplay() {
     const forceList = document.getElementById('forceList');
     const totalPointsElement = document.getElementById('totalPoints');
+    const totalPointsBadge = document.getElementById('totalPointsBadge');
+    const maxPoints = parseInt(document.getElementById('maxPoints').value) || 0;
     
     forceList.innerHTML = '';
     totalPointsElement.textContent = totalPoints;
+    
+    // Update the badge based on points limit
+    if (maxPoints > 0) {
+        if (totalPoints > maxPoints) {
+            const pointsOver = totalPoints - maxPoints;
+            totalPointsBadge.className = 'badge bg-danger';
+            totalPointsBadge.innerHTML = `BFS Total Exceeded! (${pointsOver} over)`;
+        } else {
+            totalPointsBadge.className = 'badge bg-primary';
+            totalPointsBadge.innerHTML = `BFS Total: <span id="totalPoints">${totalPoints}</span>`;
+        }
+    } else {
+        totalPointsBadge.className = 'badge bg-primary';
+        totalPointsBadge.innerHTML = `BFS Total: <span id="totalPoints">${totalPoints}</span>`;
+    }
     
     selectedUnits.forEach((unit, index) => {
         const unitElement = document.createElement('div');
