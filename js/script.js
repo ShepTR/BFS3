@@ -190,19 +190,19 @@ function printForce() {
                 .cards-page {
                     page-break-before: always;
                     display: grid;
-                    grid-template-columns: repeat(3, 2.5in);
-                    grid-template-rows: repeat(3, 3.5in);
+                    grid-template-columns: repeat(3, 3.5in);
+                    grid-template-rows: repeat(3, 2.5in);
                     gap: 0.25in;
                     justify-content: center;
                     align-items: center;
                 }
                 .card-container {
-                    width: 2.5in;
-                    height: 3.5in;
+                    width: 3.5in;
+                    height: 2.5in;
                     display: flex;
                     justify-content: center;
                     align-items: center;
-                    transform: rotate(90deg);
+                    transform: rotate(-90deg);
                     transform-origin: center;
                 }
                 .card-container img {
