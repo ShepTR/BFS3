@@ -243,18 +243,20 @@ function printForce() {
                     page-break-before: always;
                 }
                 .card {
-                    width: 2.5in;
-                    height: 3.5in;
+                    width: 3.5in;
+                    height: 2.5in;
                     display: flex;
                     justify-content: center;
                     align-items: center;
                     transform: rotate(90deg);
                     transform-origin: center;
+                    position: relative;
                 }
                 .card img {
-                    max-width: 100%;
-                    max-height: 100%;
+                    width: 3.5in;
+                    height: 2.5in;
                     object-fit: contain;
+                    transform: rotate(-90deg);
                 }
             </style>
         </head>
