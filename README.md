@@ -69,4 +69,4 @@ A web-based force builder for BattleTech that allows you to create and print for
 - Support for additional unit types (BattleMechs, Battle Armor, etc.)
 - Force composition validation
 - Save and load force lists
-- Additional unit filtering options 
+- Additional unit filtering options
