@@ -203,6 +203,7 @@ function printForce() {
                     gap: 0.25in;
                     justify-content: center;
                     align-items: center;
+                    padding: 0.5in;
                 }
                 .card-container {
                     width: 3.5in;
@@ -212,15 +213,28 @@ function printForce() {
                     align-items: center;
                     transform: rotate(-90deg);
                     transform-origin: center;
+                    overflow: hidden;
                 }
                 .card-container img {
-                    max-width: 100%;
-                    max-height: 100%;
+                    width: 100%;
+                    height: 100%;
                     object-fit: contain;
                 }
                 @media print {
                     .no-print {
                         display: none;
+                    }
+                    @page {
+                        size: letter;
+                        margin: 0.5in;
+                    }
+                    body {
+                        margin: 0;
+                        padding: 0;
+                    }
+                    .cards-page {
+                        margin: 0;
+                        padding: 0.5in;
                     }
                 }
             </style>
