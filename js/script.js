@@ -10,6 +10,7 @@ document.addEventListener('DOMContentLoaded', function() {
     // Add event listeners
     document.getElementById('addUnit').addEventListener('click', addUnitToForce);
     document.getElementById('printForce').addEventListener('click', printForce);
+    document.getElementById('unitSelect').addEventListener('change', updateCardPreview);
 });
 
 // Populate the unit select dropdown
@@ -23,6 +24,27 @@ function populateUnitSelect() {
         option.textContent = `${unit.Name} (PV: ${unit.RegPV}/${unit.VetPV})`;
         select.appendChild(option);
     });
+}
+
+// Update the card preview when a unit is selected
+function updateCardPreview() {
+    const unitName = document.getElementById('unitSelect').value;
+    const previewContainer = document.getElementById('cardPreview');
+    const previewImage = document.getElementById('previewCard');
+    
+    if (unitName) {
+        previewImage.src = `Cards/${unitName}.gif`;
+        previewImage.alt = unitName;
+        previewContainer.style.display = 'block';
+        
+        // Add error handling for missing images
+        previewImage.onerror = function() {
+            this.src = 'images/missing-card.gif';
+            this.alt = `${unitName} (Card not found)`;
+        };
+    } else {
+        previewContainer.style.display = 'none';
+    }
 }
 
 // Add a unit to the force
