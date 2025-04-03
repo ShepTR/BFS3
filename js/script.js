@@ -112,13 +112,31 @@ function updateForceDisplay() {
         totalPointsBadge.innerHTML = `BFS Total: <span id="totalPoints">${totalPoints}</span>`;
     }
     
-    // Add each unit to the force list
+    // Group units by name and experience level
+    const groupedUnits = {};
     selectedUnits.forEach((unit, index) => {
+        const key = `${unit.name}-${unit.isVeteran}`;
+        if (!groupedUnits[key]) {
+            groupedUnits[key] = {
+                name: unit.name,
+                isVeteran: unit.isVeteran,
+                points: unit.points,
+                count: 1,
+                indices: [index]
+            };
+        } else {
+            groupedUnits[key].count++;
+            groupedUnits[key].indices.push(index);
+        }
+    });
+    
+    // Add each group to the force list
+    Object.values(groupedUnits).forEach(group => {
         const unitElement = document.createElement('div');
         unitElement.className = 'force-list-item d-flex justify-content-between align-items-center mb-2 p-2 border rounded';
         unitElement.innerHTML = `
-            <span>${unit.name} (${unit.isVeteran ? 'Veteran' : 'Regular'}) - ${unit.points} PV</span>
-            <button class="btn btn-danger btn-sm" onclick="removeUnit(${index})">Remove</button>
+            <span>${group.name} (${group.isVeteran ? 'Veteran' : 'Regular'}) - ${group.points} PV x${group.count}</span>
+            <button class="btn btn-danger btn-sm" onclick="removeUnit(${group.indices[0]})">Remove</button>
         `;
         forceList.appendChild(unitElement);
     });
@@ -200,12 +218,12 @@ function printForce() {
                     display: grid;
                     grid-template-columns: repeat(3, 3.5in);
                     grid-template-rows: repeat(3, 2.5in);
-                    gap: 0.125in;
+                    gap: 0;
                     justify-content: center;
                     align-items: center;
-                    padding: 0.25in;
-                    width: 100%;
-                    height: 100%;
+                    padding: 0;
+                    width: 10.5in;
+                    height: 8in;
                 }
                 .card-container {
                     width: 3.5in;
@@ -230,7 +248,7 @@ function printForce() {
                     }
                     @page {
                         size: letter;
-                        margin: 0.25in;
+                        margin: 0;
                     }
                     body {
                         margin: 0;
@@ -238,9 +256,9 @@ function printForce() {
                     }
                     .cards-page {
                         margin: 0;
-                        padding: 0.25in;
-                        width: 8in;
-                        height: 10.5in;
+                        padding: 0;
+                        width: 10.5in;
+                        height: 8in;
                     }
                 }
             </style>
