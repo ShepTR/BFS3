@@ -243,8 +243,8 @@ function printForce() {
                     page-break-before: always;
                 }
                 .card {
-                    width: 3.5in;
-                    height: 2.5in;
+                    width: 2.5in;
+                    height: 3.5in;
                     display: flex;
                     justify-content: center;
                     align-items: center;
@@ -253,10 +253,9 @@ function printForce() {
                     position: relative;
                 }
                 .card img {
-                    width: 3.5in;
-                    height: 2.5in;
+                    width: 2.5in;
+                    height: 3.5in;
                     object-fit: contain;
-                    transform: rotate(-90deg);
                 }
             </style>
         </head>
