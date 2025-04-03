@@ -96,19 +96,17 @@ function updateForceDisplay() {
     
     // Group units by name and experience level
     const groupedUnits = {};
-    selectedUnits.forEach((unit, index) => {
+    selectedUnits.forEach(unit => {
         const key = `${unit.name}-${unit.isVeteran}`;
         if (!groupedUnits[key]) {
             groupedUnits[key] = {
                 name: unit.name,
                 isVeteran: unit.isVeteran,
                 points: unit.points,
-                count: 1,
-                indices: [index]
+                count: 1
             };
         } else {
             groupedUnits[key].count++;
-            groupedUnits[key].indices.push(index);
         }
     });
     
@@ -126,7 +124,12 @@ function updateForceDisplay() {
         const removeButton = document.createElement('button');
         removeButton.className = 'btn btn-danger btn-sm';
         removeButton.textContent = 'Remove';
-        removeButton.onclick = () => removeUnit(group.indices[0]);
+        removeButton.onclick = () => {
+            // Find and remove all instances of this unit
+            selectedUnits = selectedUnits.filter(u => !(u.name === group.name && u.isVeteran === group.isVeteran));
+            updateForceDisplay();
+            updateCardsDisplay();
+        };
         
         buttonContainer.appendChild(removeButton);
         unitElement.appendChild(nameSpan);
@@ -191,140 +194,116 @@ function updateCardsDisplay() {
 // Print the force
 function printForce() {
     const printWindow = window.open('', '_blank');
-    printWindow.document.write(`
+    const content = `
+        <!DOCTYPE html>
         <html>
         <head>
-            <title>BattleTech Force Printout</title>
+            <title>Force Summary</title>
             <style>
-                @page {
-                    size: letter portrait;
-                    margin: 0.5in;
+                @media print {
+                    @page {
+                        size: letter;
+                        margin: 0.25in;
+                    }
                 }
                 body {
                     font-family: Arial, sans-serif;
                     margin: 0;
                     padding: 0;
-                    width: 7.5in;
+                    width: 8in;
                 }
-                .force-summary {
-                    margin-bottom: 0.5in;
+                .summary {
+                    margin-bottom: 20px;
                 }
-                .force-summary h1 {
-                    text-align: center;
-                    margin-bottom: 0.25in;
-                    font-size: 14pt;
-                }
-                .force-summary table {
+                table {
                     width: 100%;
                     border-collapse: collapse;
-                    margin-bottom: 0.25in;
-                    font-size: 9pt;
+                    font-size: 10pt;
                 }
-                .force-summary th, .force-summary td {
-                    border: 1px solid #000;
-                    padding: 2px 4px;
-                    text-align: left;
+                th, td {
+                    border: 1px solid black;
+                    padding: 4px;
                 }
-                .force-summary th {
-                    background-color: #f2f2f2;
-                }
-                .cards-page {
-                    page-break-before: always;
+                .card-grid {
                     display: grid;
-                    grid-template-columns: repeat(3, 2.5in);
-                    grid-template-rows: repeat(3, 3.5in);
+                    grid-template-columns: repeat(3, 1fr);
                     gap: 0;
-                    width: 7.5in;
-                    height: 10.5in;
+                    page-break-before: always;
                 }
-                .card-container {
+                .card {
                     width: 2.5in;
                     height: 3.5in;
                     display: flex;
                     justify-content: center;
                     align-items: center;
-                    overflow: hidden;
-                    border: 1px solid #ccc;
                 }
-                .card-container img {
-                    max-width: 2.5in;
-                    max-height: 3.5in;
+                .card img {
+                    max-width: 100%;
+                    max-height: 100%;
                     object-fit: contain;
-                }
-                @media print {
-                    body {
-                        width: 7.5in;
-                    }
-                    .cards-page {
-                        width: 7.5in;
-                        height: 10.5in;
-                    }
                 }
             </style>
         </head>
         <body>
-            <div class="force-summary">
-                <h1>BattleTech Force</h1>
+            <div class="summary">
                 <table>
-                    <thead>
-                        <tr>
-                            <th style="width: 45%">Unit</th>
-                            <th style="width: 20%">Experience</th>
-                            <th style="width: 15%">Points</th>
-                            <th style="width: 20%">Count</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        ${(() => {
-                            const groupedUnits = {};
-                            selectedUnits.forEach(unit => {
-                                const key = `${unit.name}-${unit.isVeteran}`;
-                                if (!groupedUnits[key]) {
-                                    groupedUnits[key] = {
-                                        name: unit.name,
-                                        isVeteran: unit.isVeteran,
-                                        points: unit.points,
-                                        count: 1
-                                    };
-                                } else {
-                                    groupedUnits[key].count++;
-                                }
-                            });
-                            return Object.values(groupedUnits).map(group => `
+                    <tr>
+                        <th>Unit</th>
+                        <th>Experience</th>
+                        <th>Points</th>
+                        <th>Count</th>
+                    </tr>
+                    ${(() => {
+                        const grouped = {};
+                        selectedUnits.forEach(unit => {
+                            const key = unit.name + (unit.isVeteran ? '-vet' : '-reg');
+                            if (!grouped[key]) {
+                                grouped[key] = {
+                                    name: unit.name,
+                                    isVeteran: unit.isVeteran,
+                                    points: unit.points,
+                                    count: 1
+                                };
+                            } else {
+                                grouped[key].count++;
+                            }
+                        });
+                        return Object.values(grouped)
+                            .map(unit => `
                                 <tr>
-                                    <td>${group.name}</td>
-                                    <td>${group.isVeteran ? 'Veteran' : 'Regular'}</td>
-                                    <td>${group.points}</td>
-                                    <td>x${group.count}</td>
+                                    <td>${unit.name}</td>
+                                    <td>${unit.isVeteran ? 'Veteran' : 'Regular'}</td>
+                                    <td>${unit.points}</td>
+                                    <td>${unit.count}</td>
                                 </tr>
-                            `).join('');
-                        })()}
-                        <tr>
-                            <td colspan="2"><strong>Total Points:</strong></td>
-                            <td colspan="2"><strong>${totalPoints}</strong></td>
-                        </tr>
-                    </tbody>
+                            `)
+                            .join('');
+                    })()}
+                    <tr>
+                        <td colspan="2"><strong>Total Points:</strong></td>
+                        <td colspan="2"><strong>${totalPoints}</strong></td>
+                    </tr>
                 </table>
             </div>
-            
             ${(() => {
-                let html = '';
+                const cards = [];
                 for (let i = 0; i < selectedUnits.length; i += 9) {
-                    html += '<div class="cards-page">';
+                    cards.push('<div class="card-grid">');
                     for (let j = i; j < Math.min(i + 9, selectedUnits.length); j++) {
-                        html += `
-                            <div class="card-container">
+                        cards.push(`
+                            <div class="card">
                                 <img src="${selectedUnits[j].cardPath}" alt="${selectedUnits[j].name}">
                             </div>
-                        `;
+                        `);
                     }
-                    html += '</div>';
+                    cards.push('</div>');
                 }
-                return html;
+                return cards.join('');
             })()}
         </body>
         </html>
-    `);
+    `;
+    printWindow.document.write(content);
     printWindow.document.close();
     printWindow.print();
 }
