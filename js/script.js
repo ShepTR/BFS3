@@ -77,7 +77,7 @@ function addUnitToForce() {
         totalPoints += points;
         
         updateForceDisplay();
-        loadUnitCard(unitName);
+        updateCardsDisplay();
     }
 }
 
@@ -126,35 +126,28 @@ function removeUnit(index) {
     updateCardsDisplay();
 }
 
-// Load a unit card
-function loadUnitCard(unitName) {
-    const cardsContainer = document.getElementById('unitCards');
-    const cardElement = document.createElement('div');
-    cardElement.className = 'col-md-4 unit-card';
-    
-    // Create image element
-    const img = document.createElement('img');
-    img.src = `Cards/${unitName}.gif`;
-    img.alt = unitName;
-    img.className = 'img-fluid';
-    
-    // Add error handling for missing images
-    img.onerror = function() {
-        this.src = 'images/missing-card.gif';
-        this.alt = `${unitName} (Card not found)`;
-    };
-    
-    cardElement.appendChild(img);
-    cardsContainer.appendChild(cardElement);
-}
-
 // Update the cards display
 function updateCardsDisplay() {
     const cardsContainer = document.getElementById('unitCards');
     cardsContainer.innerHTML = '';
     
     selectedUnits.forEach(unit => {
-        loadUnitCard(unit.name);
+        const cardElement = document.createElement('div');
+        cardElement.className = 'col-md-4 unit-card';
+        
+        const img = document.createElement('img');
+        img.src = unit.cardPath;
+        img.alt = unit.name;
+        img.className = 'img-fluid';
+        
+        // Add error handling for missing images
+        img.onerror = function() {
+            this.src = 'images/missing-card.gif';
+            this.alt = `${unit.name} (Card not found)`;
+        };
+        
+        cardElement.appendChild(img);
+        cardsContainer.appendChild(cardElement);
     });
 }
 
