@@ -94,24 +94,6 @@ function updateForceDisplay() {
     // Clear the force list
     forceList.innerHTML = '';
     
-    // Update total points display
-    totalPointsElement.textContent = totalPoints;
-    
-    // Update the badge based on points limit
-    if (maxPoints > 0) {
-        if (totalPoints > maxPoints) {
-            const pointsOver = totalPoints - maxPoints;
-            totalPointsBadge.className = 'badge bg-danger';
-            totalPointsBadge.innerHTML = `BFS Total Exceeded! (${pointsOver} over)`;
-        } else {
-            totalPointsBadge.className = 'badge bg-primary';
-            totalPointsBadge.innerHTML = `BFS Total: <span id="totalPoints">${totalPoints}</span>`;
-        }
-    } else {
-        totalPointsBadge.className = 'badge bg-primary';
-        totalPointsBadge.innerHTML = `BFS Total: <span id="totalPoints">${totalPoints}</span>`;
-    }
-    
     // Group units by name and experience level
     const groupedUnits = {};
     selectedUnits.forEach((unit, index) => {
@@ -134,12 +116,42 @@ function updateForceDisplay() {
     Object.values(groupedUnits).forEach(group => {
         const unitElement = document.createElement('div');
         unitElement.className = 'force-list-item d-flex justify-content-between align-items-center mb-2 p-2 border rounded';
-        unitElement.innerHTML = `
-            <span>${group.name} (${group.isVeteran ? 'Veteran' : 'Regular'}) - ${group.points} PV x${group.count}</span>
-            <button class="btn btn-danger btn-sm" onclick="removeUnit(${group.indices[0]})">Remove</button>
-        `;
+        
+        const nameSpan = document.createElement('span');
+        nameSpan.textContent = `${group.name} (${group.isVeteran ? 'Veteran' : 'Regular'}) - ${group.points} PV x${group.count}`;
+        
+        const buttonContainer = document.createElement('div');
+        buttonContainer.className = 'd-flex gap-2';
+        
+        const removeButton = document.createElement('button');
+        removeButton.className = 'btn btn-danger btn-sm';
+        removeButton.textContent = 'Remove';
+        removeButton.onclick = () => removeUnit(group.indices[0]);
+        
+        buttonContainer.appendChild(removeButton);
+        unitElement.appendChild(nameSpan);
+        unitElement.appendChild(buttonContainer);
         forceList.appendChild(unitElement);
     });
+    
+    // Update total points display
+    totalPoints = selectedUnits.reduce((sum, unit) => sum + unit.points, 0);
+    totalPointsElement.textContent = totalPoints;
+    
+    // Update the badge based on points limit
+    if (maxPoints > 0) {
+        if (totalPoints > maxPoints) {
+            const pointsOver = totalPoints - maxPoints;
+            totalPointsBadge.className = 'badge bg-danger';
+            totalPointsBadge.innerHTML = `BFS Total Exceeded! (${pointsOver} over)`;
+        } else {
+            totalPointsBadge.className = 'badge bg-primary';
+            totalPointsBadge.innerHTML = `BFS Total: <span id="totalPoints">${totalPoints}</span>`;
+        }
+    } else {
+        totalPointsBadge.className = 'badge bg-primary';
+        totalPointsBadge.innerHTML = `BFS Total: <span id="totalPoints">${totalPoints}</span>`;
+    }
 }
 
 // Remove a unit from the force
@@ -192,7 +204,7 @@ function printForce() {
                     font-family: Arial, sans-serif;
                     margin: 0;
                     padding: 0;
-                    width: 7.5in; /* 8.5in - 0.5in margins on each side */
+                    width: 7.5in;
                 }
                 .force-summary {
                     margin-bottom: 0.5in;
@@ -200,17 +212,17 @@ function printForce() {
                 .force-summary h1 {
                     text-align: center;
                     margin-bottom: 0.25in;
-                    font-size: 18pt;
+                    font-size: 14pt;
                 }
                 .force-summary table {
                     width: 100%;
                     border-collapse: collapse;
                     margin-bottom: 0.25in;
-                    font-size: 10pt;
+                    font-size: 9pt;
                 }
                 .force-summary th, .force-summary td {
                     border: 1px solid #000;
-                    padding: 4px 8px;
+                    padding: 2px 4px;
                     text-align: left;
                 }
                 .force-summary th {
@@ -232,10 +244,11 @@ function printForce() {
                     justify-content: center;
                     align-items: center;
                     overflow: hidden;
+                    border: 1px solid #ccc;
                 }
                 .card-container img {
-                    width: 2.5in;
-                    height: 3.5in;
+                    max-width: 2.5in;
+                    max-height: 3.5in;
                     object-fit: contain;
                 }
                 @media print {
@@ -255,22 +268,40 @@ function printForce() {
                 <table>
                     <thead>
                         <tr>
-                            <th style="width: 50%">Unit</th>
-                            <th style="width: 25%">Experience</th>
-                            <th style="width: 25%">Points</th>
+                            <th style="width: 45%">Unit</th>
+                            <th style="width: 20%">Experience</th>
+                            <th style="width: 15%">Points</th>
+                            <th style="width: 20%">Count</th>
                         </tr>
                     </thead>
                     <tbody>
-                        ${selectedUnits.map(unit => `
-                            <tr>
-                                <td>${unit.name}</td>
-                                <td>${unit.isVeteran ? 'Veteran' : 'Regular'}</td>
-                                <td>${unit.points}</td>
-                            </tr>
-                        `).join('')}
+                        ${(() => {
+                            const groupedUnits = {};
+                            selectedUnits.forEach(unit => {
+                                const key = `${unit.name}-${unit.isVeteran}`;
+                                if (!groupedUnits[key]) {
+                                    groupedUnits[key] = {
+                                        name: unit.name,
+                                        isVeteran: unit.isVeteran,
+                                        points: unit.points,
+                                        count: 1
+                                    };
+                                } else {
+                                    groupedUnits[key].count++;
+                                }
+                            });
+                            return Object.values(groupedUnits).map(group => `
+                                <tr>
+                                    <td>${group.name}</td>
+                                    <td>${group.isVeteran ? 'Veteran' : 'Regular'}</td>
+                                    <td>${group.points}</td>
+                                    <td>x${group.count}</td>
+                                </tr>
+                            `).join('');
+                        })()}
                         <tr>
                             <td colspan="2"><strong>Total Points:</strong></td>
-                            <td><strong>${totalPoints}</strong></td>
+                            <td colspan="2"><strong>${totalPoints}</strong></td>
                         </tr>
                     </tbody>
                 </table>
