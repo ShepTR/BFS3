@@ -20,6 +20,9 @@ document.addEventListener('DOMContentLoaded', function() {
     
     // Set initial scale to 1
     setMaxPoints(32);
+    
+    // Initialize version
+    updateVersion();
 });
 
 // Populate the unit select dropdown
@@ -300,4 +303,13 @@ function setMaxPoints(points) {
     }
     
     updateForceDisplay();
+}
+
+// Update version number
+function updateVersion() {
+    const versionElement = document.querySelector('.version');
+    if (versionElement) {
+        const currentVersion = parseFloat(versionElement.textContent.replace('Version ', ''));
+        versionElement.textContent = `Version ${(currentVersion + 0.01).toFixed(2)}`;
+    }
 } 
