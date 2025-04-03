@@ -94,29 +94,13 @@ function updateForceDisplay() {
     // Clear the force list
     forceList.innerHTML = '';
     
-    // Group units by name and experience level
-    const groupedUnits = {};
-    selectedUnits.forEach(unit => {
-        const key = `${unit.name}-${unit.isVeteran}`;
-        if (!groupedUnits[key]) {
-            groupedUnits[key] = {
-                name: unit.name,
-                isVeteran: unit.isVeteran,
-                points: unit.points,
-                count: 1
-            };
-        } else {
-            groupedUnits[key].count++;
-        }
-    });
-    
-    // Add each group to the force list
-    Object.values(groupedUnits).forEach(group => {
+    // Add each unit individually
+    selectedUnits.forEach((unit, index) => {
         const unitElement = document.createElement('div');
         unitElement.className = 'force-list-item d-flex justify-content-between align-items-center mb-2 p-2 border rounded';
         
         const nameSpan = document.createElement('span');
-        nameSpan.textContent = `${group.name} (${group.isVeteran ? 'Veteran' : 'Regular'}) - ${group.points} PV x${group.count}`;
+        nameSpan.textContent = `${unit.name} (${unit.isVeteran ? 'Veteran' : 'Regular'}) - ${unit.points} PV`;
         
         const buttonContainer = document.createElement('div');
         buttonContainer.className = 'd-flex gap-2';
@@ -125,8 +109,7 @@ function updateForceDisplay() {
         removeButton.className = 'btn btn-danger btn-sm';
         removeButton.textContent = 'Remove';
         removeButton.onclick = () => {
-            // Find and remove all instances of this unit
-            selectedUnits = selectedUnits.filter(u => !(u.name === group.name && u.isVeteran === group.isVeteran));
+            selectedUnits.splice(index, 1);
             updateForceDisplay();
             updateCardsDisplay();
         };
