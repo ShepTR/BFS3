@@ -4,8 +4,16 @@ let totalPoints = 0;
 
 // Initialize the application
 document.addEventListener('DOMContentLoaded', function() {
-    // Populate unit select dropdown
-    populateUnitSelect();
+    // Add event listener for unit type change
+    document.getElementById('unitType').addEventListener('change', function() {
+        const unitType = this.value;
+        populateUnitSelect(unitType);
+        // Clear the card preview when type changes
+        document.getElementById('cardPreview').style.display = 'none';
+    });
+    
+    // Initialize with vehicles
+    populateUnitSelect('vehicle');
     
     // Add event listeners
     document.getElementById('addUnit').addEventListener('click', addUnitToForce);
@@ -25,12 +33,28 @@ document.addEventListener('DOMContentLoaded', function() {
     updateVersion();
 });
 
-// Populate the unit select dropdown
-function populateUnitSelect() {
+// Populate the unit select dropdown based on unit type
+function populateUnitSelect(unitType) {
     const select = document.getElementById('unitSelect');
     select.innerHTML = '<option value="">Choose a unit...</option>';
     
-    unitData.forEach(unit => {
+    // Filter units based on type
+    const filteredUnits = unitData.filter(unit => {
+        switch(unitType) {
+            case 'vehicle':
+                return unit.Type === 'Vehicle';
+            case 'protomech':
+                return unit.Type === 'Protomech';
+            case 'battlearmor':
+                return unit.Type === 'BattleArmor';
+            case 'infantry':
+                return unit.Type === 'Infantry';
+            default:
+                return false;
+        }
+    });
+    
+    filteredUnits.forEach(unit => {
         const option = document.createElement('option');
         option.value = unit.Name;
         option.textContent = `${unit.Name} (PV: ${unit.RegPV}/${unit.VetPV})`;
@@ -41,11 +65,14 @@ function populateUnitSelect() {
 // Update the card preview when a unit is selected
 function updateCardPreview() {
     const unitName = document.getElementById('unitSelect').value;
+    const unitType = document.getElementById('unitType').value;
     const previewContainer = document.getElementById('cardPreview');
     const previewImage = document.getElementById('previewCard');
     
     if (unitName) {
-        previewImage.src = `Cards/${unitName}.gif`;
+        // Update the card path based on unit type
+        const cardPath = `Cards/${unitType}/${unitName}.gif`;
+        previewImage.src = cardPath;
         previewImage.alt = unitName;
         previewContainer.style.display = 'block';
         
@@ -62,6 +89,7 @@ function updateCardPreview() {
 // Add a unit to the force
 function addUnitToForce() {
     const unitName = document.getElementById('unitSelect').value;
+    const unitType = document.getElementById('unitType').value;
     if (!unitName) return;
 
     const isVeteran = document.getElementById('veteran').checked;
@@ -73,7 +101,8 @@ function addUnitToForce() {
             name: unitName,
             points: points,
             isVeteran: isVeteran,
-            cardPath: `Cards/${unitName}.gif`
+            type: unitType,
+            cardPath: `Cards/${unitType}/${unitName}.gif`
         };
         
         selectedUnits.push(unitEntry);
