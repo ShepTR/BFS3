@@ -12,6 +12,14 @@ document.addEventListener('DOMContentLoaded', function() {
     document.getElementById('printForce').addEventListener('click', printForce);
     document.getElementById('unitSelect').addEventListener('change', updateCardPreview);
     document.getElementById('maxPoints').addEventListener('input', updateForceDisplay);
+    
+    // Add scale button event listeners
+    document.getElementById('scale1').addEventListener('click', () => setMaxPoints(32));
+    document.getElementById('scale2').addEventListener('click', () => setMaxPoints(64));
+    document.getElementById('scale3').addEventListener('click', () => setMaxPoints(96));
+    
+    // Set initial scale to 1
+    setMaxPoints(32);
 });
 
 // Populate the unit select dropdown
@@ -264,4 +272,25 @@ function printForce() {
     `);
     printWindow.document.close();
     printWindow.print();
+}
+
+// Set maximum points and update button states
+function setMaxPoints(points) {
+    const maxPointsInput = document.getElementById('maxPoints');
+    maxPointsInput.value = points;
+    
+    // Update button states
+    document.getElementById('scale1').classList.remove('active');
+    document.getElementById('scale2').classList.remove('active');
+    document.getElementById('scale3').classList.remove('active');
+    
+    if (points === 32) {
+        document.getElementById('scale1').classList.add('active');
+    } else if (points === 64) {
+        document.getElementById('scale2').classList.add('active');
+    } else if (points === 96) {
+        document.getElementById('scale3').classList.add('active');
+    }
+    
+    updateForceDisplay();
 } 
