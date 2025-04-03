@@ -91,7 +91,10 @@ function updateForceDisplay() {
     const totalPointsBadge = document.getElementById('totalPointsBadge');
     const maxPoints = parseInt(document.getElementById('maxPoints').value) || 0;
     
+    // Clear the force list
     forceList.innerHTML = '';
+    
+    // Update total points display
     totalPointsElement.textContent = totalPoints;
     
     // Update the badge based on points limit
@@ -109,9 +112,10 @@ function updateForceDisplay() {
         totalPointsBadge.innerHTML = `BFS Total: <span id="totalPoints">${totalPoints}</span>`;
     }
     
+    // Add each unit to the force list
     selectedUnits.forEach((unit, index) => {
         const unitElement = document.createElement('div');
-        unitElement.className = 'force-list-item';
+        unitElement.className = 'force-list-item d-flex justify-content-between align-items-center mb-2 p-2 border rounded';
         unitElement.innerHTML = `
             <span>${unit.name} (${unit.isVeteran ? 'Veteran' : 'Regular'}) - ${unit.points} PV</span>
             <button class="btn btn-danger btn-sm" onclick="removeUnit(${index})">Remove</button>
