@@ -200,10 +200,12 @@ function printForce() {
                     display: grid;
                     grid-template-columns: repeat(3, 3.5in);
                     grid-template-rows: repeat(3, 2.5in);
-                    gap: 0.25in;
+                    gap: 0.125in;
                     justify-content: center;
                     align-items: center;
-                    padding: 0.5in;
+                    padding: 0.25in;
+                    width: 100%;
+                    height: 100%;
                 }
                 .card-container {
                     width: 3.5in;
@@ -214,6 +216,8 @@ function printForce() {
                     transform: rotate(-90deg);
                     transform-origin: center;
                     overflow: hidden;
+                    margin: 0;
+                    padding: 0;
                 }
                 .card-container img {
                     width: 100%;
@@ -226,7 +230,7 @@ function printForce() {
                     }
                     @page {
                         size: letter;
-                        margin: 0.5in;
+                        margin: 0.25in;
                     }
                     body {
                         margin: 0;
@@ -234,7 +238,9 @@ function printForce() {
                     }
                     .cards-page {
                         margin: 0;
-                        padding: 0.5in;
+                        padding: 0.25in;
+                        width: 8in;
+                        height: 10.5in;
                     }
                 }
             </style>
