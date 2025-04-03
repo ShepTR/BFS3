@@ -111,7 +111,8 @@ function updateForceDisplay() {
 
 // Remove a unit from the force
 function removeUnit(index) {
-    totalPoints -= selectedUnits[index].points;
+    const unit = selectedUnits[index];
+    totalPoints -= unit.points;
     selectedUnits.splice(index, 1);
     updateForceDisplay();
     updateCardsDisplay();
