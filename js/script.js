@@ -158,27 +158,107 @@ function printForce() {
         <head>
             <title>BattleTech Force Printout</title>
             <style>
-                body { font-family: Arial, sans-serif; }
-                .print-card { page-break-inside: avoid; margin-bottom: 1rem; }
-                .force-summary { margin-bottom: 2rem; }
+                @page {
+                    size: letter;
+                    margin: 0.5in;
+                }
+                body {
+                    font-family: Arial, sans-serif;
+                    margin: 0;
+                    padding: 0;
+                }
+                .force-summary {
+                    margin-bottom: 1in;
+                }
+                .force-summary h1 {
+                    text-align: center;
+                    margin-bottom: 0.5in;
+                }
+                .force-summary table {
+                    width: 100%;
+                    border-collapse: collapse;
+                    margin-bottom: 0.5in;
+                }
+                .force-summary th, .force-summary td {
+                    border: 1px solid #000;
+                    padding: 8px;
+                    text-align: left;
+                }
+                .force-summary th {
+                    background-color: #f2f2f2;
+                }
+                .cards-page {
+                    page-break-before: always;
+                    display: grid;
+                    grid-template-columns: repeat(3, 2.5in);
+                    grid-template-rows: repeat(3, 3.5in);
+                    gap: 0.25in;
+                    justify-content: center;
+                    align-items: center;
+                }
+                .card-container {
+                    width: 2.5in;
+                    height: 3.5in;
+                    display: flex;
+                    justify-content: center;
+                    align-items: center;
+                    transform: rotate(90deg);
+                    transform-origin: center;
+                }
+                .card-container img {
+                    max-width: 100%;
+                    max-height: 100%;
+                    object-fit: contain;
+                }
+                @media print {
+                    .no-print {
+                        display: none;
+                    }
+                }
             </style>
         </head>
         <body>
             <div class="force-summary">
                 <h1>BattleTech Force</h1>
-                <p>Total Points: ${totalPoints}</p>
-                <h2>Units:</h2>
-                <ul>
-                    ${selectedUnits.map(unit => 
-                        `<li>${unit.name} (${unit.isVeteran ? 'Veteran' : 'Regular'}) - ${unit.points} PV</li>`
-                    ).join('')}
-                </ul>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Unit</th>
+                            <th>Experience</th>
+                            <th>Points</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        ${selectedUnits.map(unit => `
+                            <tr>
+                                <td>${unit.name}</td>
+                                <td>${unit.isVeteran ? 'Veteran' : 'Regular'}</td>
+                                <td>${unit.points}</td>
+                            </tr>
+                        `).join('')}
+                        <tr>
+                            <td colspan="2"><strong>Total Points:</strong></td>
+                            <td><strong>${totalPoints}</strong></td>
+                        </tr>
+                    </tbody>
+                </table>
             </div>
-            <div id="cards">
-                ${selectedUnits.map(unit => 
-                    `<div class="print-card"><img src="${unit.cardPath}" alt="${unit.name}" style="max-width: 100%;"></div>`
-                ).join('')}
-            </div>
+            
+            ${(() => {
+                let html = '';
+                for (let i = 0; i < selectedUnits.length; i += 9) {
+                    html += '<div class="cards-page">';
+                    for (let j = i; j < Math.min(i + 9, selectedUnits.length); j++) {
+                        html += `
+                            <div class="card-container">
+                                <img src="${selectedUnits[j].cardPath}" alt="${selectedUnits[j].name}">
+                            </div>
+                        `;
+                    }
+                    html += '</div>';
+                }
+                return html;
+            })()}
         </body>
         </html>
     `);
