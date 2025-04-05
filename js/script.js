@@ -291,6 +291,28 @@ function printForce() {
                     height: 100%;
                     object-fit: contain;
                 }
+                .force-list {
+                    margin-top: 2.5in;
+                    padding: 0.5in;
+                    page-break-before: always;
+                }
+                .force-list h3 {
+                    margin-bottom: 0.5in;
+                }
+                .force-list ul {
+                    list-style: none;
+                    padding: 0;
+                    margin: 0;
+                }
+                .force-list li {
+                    margin-bottom: 0.2in;
+                    display: flex;
+                    justify-content: space-between;
+                    align-items: center;
+                }
+                .force-list .badge {
+                    margin-left: 0.2in;
+                }
                 @media print {
                     body {
                         padding: 0;
@@ -300,20 +322,23 @@ function printForce() {
                         padding: 0;
                         margin: 0;
                     }
-                    .unit-card {
-                        page-break-after: always;
-                    }
                 }
             </style>
         </head>
         <body>
             <div class="card-container" id="cardContainer"></div>
+            <div class="force-list">
+                <h3>Force List</h3>
+                <ul id="forceListItems"></ul>
+            </div>
             <script>
                 // Function to create and load images
                 function loadImages() {
                     const container = document.getElementById('cardContainer');
+                    const forceListItems = document.getElementById('forceListItems');
                     const units = ${JSON.stringify(currentForce)};
                     
+                    // Create cards
                     units.forEach(unit => {
                         const cardDiv = document.createElement('div');
                         cardDiv.className = 'unit-card';
@@ -324,6 +349,19 @@ function printForce() {
                         
                         cardDiv.appendChild(img);
                         container.appendChild(cardDiv);
+                    });
+                    
+                    // Create force list
+                    units.forEach(unit => {
+                        const listItem = document.createElement('li');
+                        listItem.innerHTML = \`
+                            <div>
+                                <strong>\${unit.Name}</strong>
+                                <span class="badge \${unit.isVeteran ? 'bg-warning' : 'bg-info'}">\${unit.isVeteran ? 'Veteran' : 'Regular'}</span>
+                                <span class="badge bg-primary">\${unit.PV} PV</span>
+                            </div>
+                        \`;
+                        forceListItems.appendChild(listItem);
                     });
                     
                     // Wait for all images to load
