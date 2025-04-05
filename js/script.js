@@ -315,7 +315,7 @@ function printForce() {
                         cardDiv.className = 'unit-card';
                         
                         const img = document.createElement('img');
-                        img.src = \`Cards/\${unit.FullName.replace(/\//g, '-')}.gif\`;
+                        img.src = 'Cards/' + unit.FullName.replace(/\\//g, '-') + '.gif';
                         img.alt = unit.FullName;
                         
                         cardDiv.appendChild(img);
@@ -344,7 +344,7 @@ function printForce() {
                         } else {
                             img.onload = checkAllLoaded;
                             img.onerror = () => {
-                                console.error(\`Failed to load image: \${img.src}\`);
+                                console.error('Failed to load image: ' + img.src);
                                 checkAllLoaded();
                             };
                         }
