@@ -26,8 +26,9 @@
             display: flex;
             flex-wrap: wrap;
             gap: 10px;
-            justify-content: center;
+            justify-content: flex-start;
             margin-top: 20px;
+            width: 100%;
         }
         .card {
             width: 350px;  /* 3.5 inches at 100 DPI */
@@ -36,6 +37,7 @@
             padding: 10px;
             margin: 5px;
             text-align: center;
+            flex: 0 0 auto;
         }
         .card img {
             width: 100%;
@@ -126,7 +128,7 @@
             </div>
 
             <!-- Force List Panel -->
-            <div class="col-md-9" style="width: 75%;">
+            <div class="col-md-9">
                 <div class="card h-100">
                     <div class="card-header d-flex justify-content-between align-items-center">
                         <h3>Your Force</h3>
@@ -149,7 +151,7 @@
                             </div>
                         </div>
                     </div>
-                    <div class="card-body" style="overflow-y: auto;">
+                    <div class="card-body" style="overflow-y: auto; height: calc(100vh - 200px);">
                         <div id="forceList" class="card-container"></div>
                     </div>
                 </div>
