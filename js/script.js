@@ -383,5 +383,8 @@ document.getElementById('deleteForce').addEventListener('click', function() {
         selectedUnits = [];
         updateForceDisplay();
         updateTotalPoints();
+        // Clear the preview cards
+        const forceList = document.getElementById('forceList');
+        forceList.innerHTML = '';
     }
 }); 
