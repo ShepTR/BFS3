@@ -74,7 +74,8 @@ function updateUnitList() {
         'vehicle': ['Vehicle', 'VEHICLE', 'vehicle'],
         'protomech': ['Protomech', 'PROTOMECH', 'protomech', 'ProtoMech', 'Proto-Mech'],
         'battlearmor': ['BattleArmor', 'BATTLEARMOR', 'battlearmor', 'Battle Armor'],
-        'infantry': ['Infantry', 'INFANTRY', 'infantry']
+        'infantry': ['Infantry', 'INFANTRY', 'infantry'],
+        'emplacement': ['Emplacement', 'EMPLACEMENT', 'emplacement', 'Gun Emplacement', 'GunEmplacement']
     };
     
     const correctType = typeMapping[selectedType];
