@@ -141,6 +141,8 @@ function updateForceDisplay() {
     const totalPointsBadge = document.getElementById('totalPointsBadge');
     const maxPoints = parseInt(document.getElementById('maxPoints').value) || 0;
     
+    if (!forceList) return; // Guard against missing element
+    
     // Clear the force list
     forceList.innerHTML = '';
     
@@ -172,21 +174,25 @@ function updateForceDisplay() {
     
     // Update total points display
     totalPoints = selectedUnits.reduce((sum, unit) => sum + unit.points, 0);
-    totalPointsElement.textContent = totalPoints;
+    if (totalPointsElement) {
+        totalPointsElement.textContent = totalPoints;
+    }
     
     // Update the badge based on points limit
-    if (maxPoints > 0) {
-        if (totalPoints > maxPoints) {
-            const pointsOver = totalPoints - maxPoints;
-            totalPointsBadge.className = 'badge bg-danger';
-            totalPointsBadge.innerHTML = `BFS Total Exceeded! (${pointsOver} over)`;
+    if (totalPointsBadge) {
+        if (maxPoints > 0) {
+            if (totalPoints > maxPoints) {
+                const pointsOver = totalPoints - maxPoints;
+                totalPointsBadge.className = 'badge bg-danger';
+                totalPointsBadge.innerHTML = `BFS Total Exceeded! (${pointsOver} over)`;
+            } else {
+                totalPointsBadge.className = 'badge bg-primary';
+                totalPointsBadge.innerHTML = `BFS Total: <span id="totalPoints">${totalPoints}</span>`;
+            }
         } else {
             totalPointsBadge.className = 'badge bg-primary';
             totalPointsBadge.innerHTML = `BFS Total: <span id="totalPoints">${totalPoints}</span>`;
         }
-    } else {
-        totalPointsBadge.className = 'badge bg-primary';
-        totalPointsBadge.innerHTML = `BFS Total: <span id="totalPoints">${totalPoints}</span>`;
     }
 }
 
@@ -201,17 +207,18 @@ function removeUnit(index) {
 
 // Update the cards display
 function updateCardsDisplay() {
-    const cardsContainer = document.getElementById('unitCards');
+    const cardsContainer = document.getElementById('forceList');
+    if (!cardsContainer) return; // Guard against missing element
+    
     cardsContainer.innerHTML = '';
     
     selectedUnits.forEach(unit => {
         const cardElement = document.createElement('div');
-        cardElement.className = 'col-md-4 unit-card mb-3';
+        cardElement.className = 'card';
         
         const img = document.createElement('img');
         img.src = unit.cardPath;
         img.alt = unit.name;
-        img.className = 'img-fluid';
         
         // Add error handling for missing images
         img.onerror = function() {
