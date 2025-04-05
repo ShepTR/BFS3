@@ -4,7 +4,12 @@ import os
 
 def convert_csv_to_js():
     # List of CSV files to process
-    csv_files = ['MULOutput - Vehicles.csv', 'MULOutput - Protomechs.csv']
+    csv_files = [
+        'MULOutput - Vehicles.csv', 
+        'MULOutput - Protomechs.csv',
+        'MULOutput - BattleArmor.csv',
+        'MULOutput - InfantryEmp.csv'
+    ]
     all_units = []
     
     for csv_file in csv_files:
@@ -23,7 +28,17 @@ def convert_csv_to_js():
         
         # Ensure UnitType is preserved and at the start of each record
         df = df[['UnitType'] + [col for col in df.columns if col != 'UnitType']]  # Move UnitType to first column
-        df['UnitType'] = df['UnitType'].fillna('Vehicle' if 'Vehicles' in csv_file else 'Protomech')  # Fill any NaN values
+        
+        # Fill any NaN values in UnitType based on the filename
+        if 'Vehicles' in csv_file:
+            df['UnitType'] = df['UnitType'].fillna('Vehicle')
+        elif 'Protomechs' in csv_file:
+            df['UnitType'] = df['UnitType'].fillna('Protomech')
+        elif 'BattleArmor' in csv_file:
+            df['UnitType'] = df['UnitType'].fillna('BattleArmor')
+        elif 'InfantryEmp' in csv_file:
+            # Check if it's an emplacement or infantry
+            df['UnitType'] = df.apply(lambda row: 'Emplacement' if 'Emplacement' in str(row['Name']) else 'Infantry', axis=1)
         
         # Convert to list of dictionaries and add to all units
         units = df.to_dict('records')
@@ -31,7 +46,7 @@ def convert_csv_to_js():
     
     # Create JavaScript file content
     js_content = f"// Auto-generated from multiple CSV files\n"
-    js_content += "const unitData = " + json.dumps(all_units, indent=2) + ";\n"
+    js_content += "const units = " + json.dumps(all_units, indent=2) + ";\n"
     
     # Write to JavaScript file
     with open('js/units.js', 'w') as f:
