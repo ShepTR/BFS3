@@ -18,6 +18,9 @@ def convert_csv_to_js():
     if 'VetPV' not in df.columns:
         df['VetPV'] = df['PV'] * 1.5  # Assuming veteran costs 50% more
     
+    # Ensure UnitType is preserved
+    df['UnitType'] = df['UnitType'].fillna('Vehicle')  # Fill any NaN values with 'Vehicle'
+    
     # Convert to list of dictionaries
     units = df.to_dict('records')
     
