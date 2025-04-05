@@ -107,7 +107,7 @@ function updateCardPreview() {
         const unitType = unitTypeSelect.value;
         const unit = unitData.find(u => u.FullName === selectedUnit);
         if (unit) {
-            const cardPath = `Cards/${unit.FullName}.gif`;
+            const cardPath = `Cards/${unit.FullName.replace(/ /g, '-')}.gif`;
             previewCard.src = cardPath;
             cardPreview.style.display = 'block';
         }
@@ -203,6 +203,7 @@ function updateTotalPoints() {
     const total = currentForce.reduce((sum, unit) => sum + unit.PV, 0);
     totalPointsSpan.textContent = total;
     
+    // Update badge color based on points
     if (total > maxPoints) {
         totalPointsBadge.classList.remove('bg-primary');
         totalPointsBadge.classList.add('bg-danger');
@@ -313,7 +314,7 @@ function printForce() {
                         cardDiv.className = 'unit-card';
                         
                         const img = document.createElement('img');
-                        img.src = \`Cards/\${unit.FullName}.gif\`;
+                        img.src = \`Cards/\${unit.FullName.replace(/ /g, '-')}.gif\`;
                         img.alt = unit.FullName;
                         
                         cardDiv.appendChild(img);
