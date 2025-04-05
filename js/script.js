@@ -267,9 +267,9 @@ function printForce() {
                     display: grid;
                     grid-template-columns: repeat(3, 3.5in);
                     grid-template-rows: repeat(3, 2.5in);
-                    gap: 0.1in;
+                    gap: 0;
                     justify-content: center;
-                    padding: 0.5in;
+                    padding: 0;
                     margin: 0;
                 }
                 .unit-card {
@@ -319,7 +319,7 @@ function printForce() {
                         margin: 0;
                     }
                     .card-container {
-                        padding: 0.5in;
+                        padding: 0;
                         margin: 0;
                     }
                 }
