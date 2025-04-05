@@ -196,6 +196,7 @@ function printForce() {
                 <span class="visually-hidden">Loading...</span>
             </div>
             <div>Preparing print layout...</div>
+            <div id="loadingProgress" class="small text-muted mt-2">Loading images: 0/0</div>
         </div>
     `;
     document.body.appendChild(loadingDiv);
@@ -203,43 +204,58 @@ function printForce() {
     // Wait for all images to load
     const images = document.querySelectorAll('.unit-card img');
     let loadedImages = 0;
+    const totalImages = images.length;
     
-    if (images.length === 0) {
-        window.print();
-        loadingDiv.remove();
+    // Update progress display
+    const progressElement = document.getElementById('loadingProgress');
+    progressElement.textContent = `Loading images: 0/${totalImages}`;
+    
+    if (totalImages === 0) {
+        // No images to load, print immediately
+        setTimeout(() => {
+            window.print();
+            loadingDiv.remove();
+        }, 500);
         return;
     }
     
-    images.forEach(img => {
-        if (img.complete) {
-            loadedImages++;
-            if (loadedImages === images.length) {
+    // Function to update progress
+    const updateProgress = () => {
+        loadedImages++;
+        progressElement.textContent = `Loading images: ${loadedImages}/${totalImages}`;
+        
+        // If all images are loaded, print after a short delay
+        if (loadedImages === totalImages) {
+            setTimeout(() => {
                 window.print();
                 loadingDiv.remove();
-            }
+            }, 500);
+        }
+    };
+    
+    // Check each image
+    images.forEach(img => {
+        if (img.complete) {
+            // Image already loaded
+            updateProgress();
         } else {
-            img.onload = () => {
-                loadedImages++;
-                if (loadedImages === images.length) {
-                    window.print();
-                    loadingDiv.remove();
-                }
-            };
+            // Image still loading
+            img.onload = updateProgress;
             img.onerror = () => {
-                loadedImages++;
-                if (loadedImages === images.length) {
-                    window.print();
-                    loadingDiv.remove();
-                }
+                console.error(`Failed to load image: ${img.src}`);
+                updateProgress();
             };
         }
     });
     
     // Fallback in case some images don't trigger onload
     setTimeout(() => {
-        window.print();
-        loadingDiv.remove();
-    }, 10000);
+        if (document.body.contains(loadingDiv)) {
+            console.warn('Print timeout reached, some images may not have loaded');
+            window.print();
+            loadingDiv.remove();
+        }
+    }, 15000); // 15 second timeout
 }
 
 // Initialize on load
