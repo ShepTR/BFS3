@@ -79,16 +79,28 @@ function updateCardPreview() {
     const previewImage = document.getElementById('previewCard');
     
     if (unitName) {
-        // Update the card path based on unit type
-        const cardPath = `Cards/${unitType.charAt(0).toUpperCase() + unitType.slice(1)}/${unitName}.gif`;
+        // Find the unit in unitData to get its exact type
+        const unit = unitData.find(u => u.Name === unitName);
+        console.log('Selected unit:', unit);
+        
+        // Update the card path - look directly in the Cards directory
+        const cardPath = `Cards/${unitName}.gif`;
+        console.log('Attempting to load card from:', cardPath);
+        
         previewImage.src = cardPath;
         previewImage.alt = unitName;
         previewContainer.style.display = 'block';
         
         // Add error handling for missing images
         previewImage.onerror = function() {
+            console.log('Failed to load card image:', cardPath);
             this.src = 'images/missing-card.gif';
             this.alt = `${unitName} (Card not found)`;
+        };
+        
+        // Add success handler
+        previewImage.onload = function() {
+            console.log('Successfully loaded card image:', cardPath);
         };
     } else {
         previewContainer.style.display = 'none';
