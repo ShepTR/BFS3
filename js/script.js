@@ -79,12 +79,12 @@ function updateCardPreview() {
     const previewImage = document.getElementById('previewCard');
     
     if (unitName) {
-        // Find the unit in unitData to get its exact type
+        // Find the unit in unitData to get its exact type and full name
         const unit = unitData.find(u => u.Name === unitName);
         console.log('Selected unit:', unit);
         
-        // Update the card path - look directly in the Cards directory
-        const cardPath = `Cards/${unitName}.gif`;
+        // Update the card path using FullName
+        const cardPath = `Cards/${unit.FullName}.gif`;
         console.log('Attempting to load card from:', cardPath);
         
         previewImage.src = cardPath;
@@ -123,7 +123,7 @@ function addUnitToForce() {
             points: points,
             isVeteran: isVeteran,
             type: unitType,
-            cardPath: `Cards/${unitType}/${unitName}.gif`
+            cardPath: `Cards/${unit.FullName}.gif`
         };
         
         selectedUnits.push(unitEntry);
