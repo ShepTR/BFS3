@@ -107,7 +107,7 @@ function updateCardPreview() {
         const unitType = unitTypeSelect.value;
         const unit = unitData.find(u => u.FullName === selectedUnit);
         if (unit) {
-            const cardPath = `Cards/${unit.FullName.replace(/ /g, '-')}.gif`;
+            const cardPath = `Cards/${unit.FullName.replace(/\//g, '-')}.gif`;
             previewCard.src = cardPath;
             cardPreview.style.display = 'block';
         }
@@ -314,7 +314,7 @@ function printForce() {
                         cardDiv.className = 'unit-card';
                         
                         const img = document.createElement('img');
-                        img.src = \`Cards/\${unit.FullName.replace(/ /g, '-')}.gif\`;
+                        img.src = \`Cards/\${unit.FullName.replace(/\//g, '-')}.gif\`;
                         img.alt = unit.FullName;
                         
                         cardDiv.appendChild(img);
