@@ -259,7 +259,7 @@ function printForce() {
                 }
                 .card-container {
                     display: flex;
-                    flex-wrap: wrap;
+                    flex-wrap: nowrap;
                     gap: 0;
                     justify-content: flex-start;
                     padding: 0;
