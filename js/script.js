@@ -51,7 +51,9 @@ function init() {
         document.getElementById('scale1').classList.add('active');
         document.getElementById('scale2').classList.remove('active');
         document.getElementById('scale3').classList.remove('active');
-        updateMaxPoints();
+        maxPoints = 32;
+        maxPointsInput.value = maxPoints;
+        updateTotalPoints();
         updateForceList();
     });
 
@@ -60,7 +62,9 @@ function init() {
         document.getElementById('scale1').classList.remove('active');
         document.getElementById('scale2').classList.add('active');
         document.getElementById('scale3').classList.remove('active');
-        updateMaxPoints();
+        maxPoints = 64;
+        maxPointsInput.value = maxPoints;
+        updateTotalPoints();
         updateForceList();
     });
 
@@ -69,7 +73,9 @@ function init() {
         document.getElementById('scale1').classList.remove('active');
         document.getElementById('scale2').classList.remove('active');
         document.getElementById('scale3').classList.add('active');
-        updateMaxPoints();
+        maxPoints = 96;
+        maxPointsInput.value = maxPoints;
+        updateTotalPoints();
         updateForceList();
     });
 
@@ -82,6 +88,10 @@ function init() {
         unitSelect.selectedIndex = 1; // Select the first unit (index 0 is the placeholder)
         updateCardPreview(); // Update the card preview
     }
+    
+    // Set initial max points based on scale
+    maxPoints = currentScale * 32;
+    maxPointsInput.value = maxPoints;
     
     // Update total points
     updateTotalPoints();
@@ -235,26 +245,8 @@ function updateTotalPoints() {
 
 // Update max points
 function updateMaxPoints() {
-    const maxPoints = currentScale * 100;
-    document.getElementById('maxPoints').textContent = maxPoints;
-    updatePointsDisplay();
-}
-
-// Function to update points display
-function updatePointsDisplay() {
-    const totalPoints = currentForce.reduce((sum, unit) => sum + unit.PV, 0);
-    const maxPoints = currentScale * 100;
-    const pointsDisplay = document.getElementById('pointsDisplay');
-    pointsDisplay.textContent = `${totalPoints}/${maxPoints} PV`;
-    
-    // Update color based on points
-    if (totalPoints > maxPoints) {
-        pointsDisplay.classList.remove('text-success');
-        pointsDisplay.classList.add('text-danger');
-    } else {
-        pointsDisplay.classList.remove('text-danger');
-        pointsDisplay.classList.add('text-success');
-    }
+    maxPoints = parseInt(maxPointsInput.value) || 32;
+    updateTotalPoints();
 }
 
 // Delete force
@@ -297,6 +289,7 @@ function printForce() {
                     height: 7.5in;  /* 3 cards high */
                     margin: 0;
                     padding: 0;
+                    page-break-after: always;
                 }
                 .unit-card {
                     position: absolute;
@@ -336,7 +329,7 @@ function printForce() {
             </style>
         </head>
         <body>
-            <div class="card-container" id="cardContainer"></div>
+            <div id="cardPages"></div>
             <div class="force-list">
                 <h3>Force List</h3>
                 <ul id="forceListItems"></ul>
@@ -344,27 +337,38 @@ function printForce() {
             <script>
                 // Function to create and load images
                 function loadImages() {
-                    const container = document.getElementById('cardContainer');
+                    const cardPages = document.getElementById('cardPages');
                     const forceListItems = document.getElementById('forceListItems');
                     const units = ${JSON.stringify(currentForce)};
                     
-                    // Create cards in a 3x3 grid
-                    units.forEach((unit, index) => {
-                        const row = Math.floor(index / 3);
-                        const col = index % 3;
+                    // Create card pages (9 cards per page)
+                    for (let pageIndex = 0; pageIndex < Math.ceil(units.length / 9); pageIndex++) {
+                        const cardContainer = document.createElement('div');
+                        cardContainer.className = 'card-container';
                         
-                        const cardDiv = document.createElement('div');
-                        cardDiv.className = 'unit-card';
-                        cardDiv.style.left = (col * 3.5) + 'in';
-                        cardDiv.style.top = (row * 2.5) + 'in';
+                        // Get units for this page
+                        const pageUnits = units.slice(pageIndex * 9, (pageIndex + 1) * 9);
                         
-                        const img = document.createElement('img');
-                        img.src = 'Cards/' + unit.FullName.replace(/\\//g, '-') + '.gif';
-                        img.alt = unit.FullName;
+                        // Create cards in a 3x3 grid
+                        pageUnits.forEach((unit, index) => {
+                            const row = Math.floor(index / 3);
+                            const col = index % 3;
+                            
+                            const cardDiv = document.createElement('div');
+                            cardDiv.className = 'unit-card';
+                            cardDiv.style.left = (col * 3.5) + 'in';
+                            cardDiv.style.top = (row * 2.5) + 'in';
+                            
+                            const img = document.createElement('img');
+                            img.src = 'Cards/' + unit.FullName.replace(/\\//g, '-') + '.gif';
+                            img.alt = unit.FullName;
+                            
+                            cardDiv.appendChild(img);
+                            cardContainer.appendChild(cardDiv);
+                        });
                         
-                        cardDiv.appendChild(img);
-                        container.appendChild(cardDiv);
-                    });
+                        cardPages.appendChild(cardContainer);
+                    }
                     
                     // Create force list
                     units.forEach(unit => {
@@ -380,7 +384,7 @@ function printForce() {
                     });
                     
                     // Wait for all images to load
-                    const images = document.querySelectorAll('#cardContainer .unit-card img');
+                    const images = document.querySelectorAll('.unit-card img');
                     let loadedImages = 0;
                     
                     function checkAllLoaded() {
