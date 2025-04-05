@@ -6,7 +6,8 @@ let maxPoints = 32;
 // DOM Elements
 const unitTypeSelect = document.getElementById('unitType');
 const unitSelect = document.getElementById('unitSelect');
-const veteranCheckbox = document.getElementById('veteran');
+const regularRadio = document.getElementById('regular');
+const veteranRadio = document.getElementById('veteran');
 const addUnitButton = document.getElementById('addUnit');
 const forceList = document.getElementById('forceList');
 const previewCard = document.getElementById('previewCard');
@@ -98,8 +99,8 @@ function addUnitToForce() {
     const unit = unitData.find(u => u.FullName === selectedUnit);
     if (!unit) return;
     
-    const isVeteran = veteranCheckbox.checked;
-    const pv = isVeteran ? Math.ceil(unit.VetPV) : unit.RegPV;
+    const isVeteran = veteranRadio.checked;
+    const pv = isVeteran ? unit.VetPV : unit.RegPV;
     
     const forceUnit = {
         ...unit,

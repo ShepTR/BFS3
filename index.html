@@ -149,11 +149,14 @@
                             </select>
                         </div>
                         <div class="mb-3">
+                            <label class="form-label">Experience Level:</label>
                             <div class="form-check">
-                                <input class="form-check-input" type="checkbox" id="veteran">
-                                <label class="form-check-label" for="veteran">
-                                    Veteran (1.5x PV)
-                                </label>
+                                <input class="form-check-input" type="radio" name="experience" id="regular" value="regular" checked>
+                                <label class="form-check-label" for="regular">Regular</label>
+                            </div>
+                            <div class="form-check">
+                                <input class="form-check-input" type="radio" name="experience" id="veteran" value="veteran">
+                                <label class="form-check-label" for="veteran">Veteran</label>
                             </div>
                         </div>
                         <div class="card-preview" id="cardPreview" style="display: none;">
