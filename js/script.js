@@ -236,29 +236,80 @@ function printForce() {
     // Wait for any pending image loads
     const images = document.querySelectorAll('.card img');
     let loadedImages = 0;
+    let totalImages = images.length;
     
-    if (images.length === 0) {
-        window.print();
+    console.log(`Waiting for ${totalImages} images to load before printing`);
+    
+    if (totalImages === 0) {
+        console.log('No images to load, printing immediately');
+        setTimeout(() => window.print(), 500);
         return;
     }
     
+    // Create a loading indicator
+    const loadingIndicator = document.createElement('div');
+    loadingIndicator.id = 'printLoadingIndicator';
+    loadingIndicator.style.position = 'fixed';
+    loadingIndicator.style.top = '50%';
+    loadingIndicator.style.left = '50%';
+    loadingIndicator.style.transform = 'translate(-50%, -50%)';
+    loadingIndicator.style.padding = '20px';
+    loadingIndicator.style.background = 'rgba(255, 255, 255, 0.8)';
+    loadingIndicator.style.borderRadius = '5px';
+    loadingIndicator.style.boxShadow = '0 0 10px rgba(0,0,0,0.2)';
+    loadingIndicator.style.zIndex = '9999';
+    loadingIndicator.innerHTML = `<div class="text-center"><h4>Preparing print layout...</h4><p>Loading images: <span id="loadingProgress">0/${totalImages}</span></p></div>`;
+    document.body.appendChild(loadingIndicator);
+    
+    // Function to update loading progress
+    const updateProgress = () => {
+        const progressElement = document.getElementById('loadingProgress');
+        if (progressElement) {
+            progressElement.textContent = `${loadedImages}/${totalImages}`;
+        }
+    };
+    
+    // Function to handle printing
+    const handlePrint = () => {
+        console.log('All images loaded, printing now');
+        document.body.removeChild(loadingIndicator);
+        setTimeout(() => window.print(), 500);
+    };
+    
+    // Check each image
     images.forEach(img => {
         if (img.complete) {
             loadedImages++;
+            updateProgress();
+            if (loadedImages === totalImages) {
+                handlePrint();
+            }
         } else {
             img.onload = () => {
                 loadedImages++;
-                if (loadedImages === images.length) {
-                    window.print();
+                updateProgress();
+                if (loadedImages === totalImages) {
+                    handlePrint();
+                }
+            };
+            img.onerror = () => {
+                console.log(`Error loading image: ${img.src}`);
+                loadedImages++;
+                updateProgress();
+                if (loadedImages === totalImages) {
+                    handlePrint();
                 }
             };
         }
     });
     
-    // If all images are already loaded, print immediately
-    if (loadedImages === images.length) {
-        window.print();
-    }
+    // Fallback in case some images don't trigger onload
+    setTimeout(() => {
+        if (document.body.contains(loadingIndicator)) {
+            console.log('Timeout reached, printing anyway');
+            handlePrint();
+        }
+    }, 10000); // 10 second timeout
 }
 
 // Set maximum points and update button states
