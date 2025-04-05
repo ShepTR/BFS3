@@ -145,9 +145,11 @@ function addUnitToForce() {
 
 // Update force list display
 function updateForceList() {
-    // Update the card display
+    // Clear the force list and force list items
     forceList.innerHTML = '';
+    forceListItems.innerHTML = '';
     
+    // Update the card display
     currentForce.forEach((unit, index) => {
         const cardDiv = document.createElement('div');
         cardDiv.className = 'unit-card';
@@ -167,8 +169,6 @@ function updateForceList() {
     });
     
     // Update the force list items
-    forceListItems.innerHTML = '';
-    
     currentForce.forEach((unit, index) => {
         const listItem = document.createElement('li');
         listItem.className = 'list-group-item d-flex justify-content-between align-items-center';
