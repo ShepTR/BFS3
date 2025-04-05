@@ -266,7 +266,7 @@ function printForce() {
                 .card-container {
                     display: flex;
                     flex-wrap: wrap;
-                    gap: 1px;
+                    gap: 0;
                     justify-content: flex-start;
                     padding: 0;
                     margin: 0;
@@ -284,7 +284,7 @@ function printForce() {
                     position: relative;
                     left: 0;
                     margin-left: 2.5in;
-                    margin-bottom: 1px;
+                    margin-bottom: 0;
                 }
                 .unit-card img {
                     width: 100%;
@@ -299,6 +299,9 @@ function printForce() {
                     .card-container {
                         padding: 0;
                         margin: 0;
+                    }
+                    .unit-card {
+                        page-break-after: always;
                     }
                 }
             </style>
