@@ -46,9 +46,32 @@ function init() {
     maxPointsInput.addEventListener('change', updateMaxPoints);
 
     // Scale buttons
-    document.getElementById('scale1').addEventListener('click', () => setScale(1));
-    document.getElementById('scale2').addEventListener('click', () => setScale(2));
-    document.getElementById('scale3').addEventListener('click', () => setScale(3));
+    document.getElementById('scale1').addEventListener('click', () => {
+        currentScale = 1;
+        document.getElementById('scale1').classList.add('active');
+        document.getElementById('scale2').classList.remove('active');
+        document.getElementById('scale3').classList.remove('active');
+        updateMaxPoints();
+        updateForceList();
+    });
+
+    document.getElementById('scale2').addEventListener('click', () => {
+        currentScale = 2;
+        document.getElementById('scale1').classList.remove('active');
+        document.getElementById('scale2').classList.add('active');
+        document.getElementById('scale3').classList.remove('active');
+        updateMaxPoints();
+        updateForceList();
+    });
+
+    document.getElementById('scale3').addEventListener('click', () => {
+        currentScale = 3;
+        document.getElementById('scale1').classList.remove('active');
+        document.getElementById('scale2').classList.remove('active');
+        document.getElementById('scale3').classList.add('active');
+        updateMaxPoints();
+        updateForceList();
+    });
 
     // Set initial unit type to vehicle and load units
     unitTypeSelect.value = "vehicle";
@@ -210,18 +233,28 @@ function updateTotalPoints() {
     }
 }
 
-// Set scale
-function setScale(scale) {
-    currentScale = scale;
-    document.querySelectorAll('.unit-card').forEach(card => {
-        card.style.transform = `scale(${scale})`;
-    });
-}
-
 // Update max points
 function updateMaxPoints() {
-    maxPoints = parseInt(maxPointsInput.value) || 32;
-    updateTotalPoints();
+    const maxPoints = currentScale * 100;
+    document.getElementById('maxPoints').textContent = maxPoints;
+    updatePointsDisplay();
+}
+
+// Function to update points display
+function updatePointsDisplay() {
+    const totalPoints = currentForce.reduce((sum, unit) => sum + unit.PV, 0);
+    const maxPoints = currentScale * 100;
+    const pointsDisplay = document.getElementById('pointsDisplay');
+    pointsDisplay.textContent = `${totalPoints}/${maxPoints} PV`;
+    
+    // Update color based on points
+    if (totalPoints > maxPoints) {
+        pointsDisplay.classList.remove('text-success');
+        pointsDisplay.classList.add('text-danger');
+    } else {
+        pointsDisplay.classList.remove('text-danger');
+        pointsDisplay.classList.add('text-success');
+    }
 }
 
 // Delete force
