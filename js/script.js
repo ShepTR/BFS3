@@ -283,7 +283,7 @@ function printForce() {
                     });
                     
                     // Wait for all images to load
-                    const images = document.querySelectorAll('.unit-card img');
+                    const images = document.querySelectorAll('#cardContainer .unit-card img');
                     let loadedImages = 0;
                     
                     function checkAllLoaded() {
