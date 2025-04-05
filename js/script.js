@@ -258,26 +258,20 @@ function printForce() {
                     background: white;
                 }
                 .card-container {
-                    display: flex;
-                    flex-wrap: nowrap;
-                    gap: 0;
-                    justify-content: flex-start;
-                    padding: 0;
+                    position: relative;
+                    width: 10.5in;
+                    height: 7.5in;
                     margin: 0;
+                    padding: 0;
                 }
                 .unit-card {
+                    position: absolute;
                     width: 3.5in;
                     height: 2.5in;
                     border: 1px solid #ccc;
                     padding: 0;
                     margin: 0;
                     text-align: center;
-                    page-break-inside: avoid;
-                    transform: rotate(90deg);
-                    transform-origin: top left;
-                    position: relative;
-                    left: 0;
-                    margin-left: 2.5in;
                 }
                 .unit-card img {
                     width: 100%;
@@ -285,7 +279,6 @@ function printForce() {
                     object-fit: contain;
                 }
                 .force-list {
-                    margin-top: 2.5in;
                     padding: 0.5in;
                     page-break-before: always;
                 }
@@ -306,16 +299,6 @@ function printForce() {
                 .force-list .badge {
                     margin-left: 0.2in;
                 }
-                @media print {
-                    body {
-                        padding: 0;
-                        margin: 0;
-                    }
-                    .card-container {
-                        padding: 0;
-                        margin: 0;
-                    }
-                }
             </style>
         </head>
         <body>
@@ -331,10 +314,15 @@ function printForce() {
                     const forceListItems = document.getElementById('forceListItems');
                     const units = ${JSON.stringify(currentForce)};
                     
-                    // Create cards
-                    units.forEach(unit => {
+                    // Create cards in a 3x3 grid
+                    units.forEach((unit, index) => {
+                        const row = Math.floor(index / 3);
+                        const col = index % 3;
+                        
                         const cardDiv = document.createElement('div');
                         cardDiv.className = 'unit-card';
+                        cardDiv.style.left = (col * 3.5) + 'in';
+                        cardDiv.style.top = (row * 2.5) + 'in';
                         
                         const img = document.createElement('img');
                         img.src = 'Cards/' + unit.FullName.replace(/\\//g, '-') + '.gif';
