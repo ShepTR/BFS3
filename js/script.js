@@ -264,14 +264,12 @@ function printForce() {
                     background: white;
                 }
                 .card-container {
-                    display: grid;
-                    grid-template-columns: repeat(3, 3.5in);
-                    grid-template-rows: repeat(3, 2.5in);
+                    display: flex;
+                    flex-wrap: wrap;
                     gap: 0;
-                    justify-content: start;
+                    justify-content: flex-start;
                     padding: 0;
                     margin: 0;
-                    width: 10.5in;
                 }
                 .unit-card {
                     width: 3.5in;
