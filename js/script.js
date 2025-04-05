@@ -233,122 +233,32 @@ function updateCardsDisplay() {
 
 // Print the force
 function printForce() {
-    const printWindow = window.open('', '_blank');
-    const content = `
-        <!DOCTYPE html>
-        <html>
-        <head>
-            <title>Force Summary</title>
-            <style>
-                @media print {
-                    @page {
-                        size: letter;
-                        margin: 0.25in;
-                    }
+    // Wait for any pending image loads
+    const images = document.querySelectorAll('.card img');
+    let loadedImages = 0;
+    
+    if (images.length === 0) {
+        window.print();
+        return;
+    }
+    
+    images.forEach(img => {
+        if (img.complete) {
+            loadedImages++;
+        } else {
+            img.onload = () => {
+                loadedImages++;
+                if (loadedImages === images.length) {
+                    window.print();
                 }
-                body {
-                    font-family: Arial, sans-serif;
-                    margin: 0;
-                    padding: 0;
-                    width: 8in;
-                }
-                .summary {
-                    margin-bottom: 20px;
-                }
-                table {
-                    width: 100%;
-                    border-collapse: collapse;
-                    font-size: 10pt;
-                }
-                th, td {
-                    border: 1px solid black;
-                    padding: 4px;
-                }
-                .card-grid {
-                    display: grid;
-                    grid-template-columns: repeat(3, 1fr);
-                    gap: 0;
-                    page-break-before: always;
-                }
-                .card {
-                    width: 2.5in;
-                    height: 3.5in;
-                    display: flex;
-                    justify-content: center;
-                    align-items: center;
-                    transform: rotate(90deg);
-                    transform-origin: center;
-                    position: relative;
-                }
-                .card img {
-                    width: 2.5in;
-                    height: 3.5in;
-                    object-fit: contain;
-                }
-            </style>
-        </head>
-        <body>
-            <div class="summary">
-                <table>
-                    <tr>
-                        <th>Unit</th>
-                        <th>Experience</th>
-                        <th>Points</th>
-                        <th>Count</th>
-                    </tr>
-                    ${(() => {
-                        const grouped = {};
-                        selectedUnits.forEach(unit => {
-                            const key = unit.name + (unit.isVeteran ? '-vet' : '-reg');
-                            if (!grouped[key]) {
-                                grouped[key] = {
-                                    name: unit.name,
-                                    isVeteran: unit.isVeteran,
-                                    points: unit.points,
-                                    count: 1
-                                };
-                            } else {
-                                grouped[key].count++;
-                            }
-                        });
-                        return Object.values(grouped)
-                            .map(unit => `
-                                <tr>
-                                    <td>${unit.name}</td>
-                                    <td>${unit.isVeteran ? 'Veteran' : 'Regular'}</td>
-                                    <td>${unit.points}</td>
-                                    <td>${unit.count}</td>
-                                </tr>
-                            `)
-                            .join('');
-                    })()}
-                    <tr>
-                        <td colspan="2"><strong>Total Points:</strong></td>
-                        <td colspan="2"><strong>${totalPoints}</strong></td>
-                    </tr>
-                </table>
-            </div>
-            ${(() => {
-                const cards = [];
-                for (let i = 0; i < selectedUnits.length; i += 9) {
-                    cards.push('<div class="card-grid">');
-                    for (let j = i; j < Math.min(i + 9, selectedUnits.length); j++) {
-                        cards.push(`
-                            <div class="card">
-                                <img src="${selectedUnits[j].cardPath}" alt="${selectedUnits[j].name}">
-                            </div>
-                        `);
-                    }
-                    cards.push('</div>');
-                }
-                return cards.join('');
-            })()}
-        </body>
-        </html>
-    `;
-    printWindow.document.write(content);
-    printWindow.document.close();
-    printWindow.print();
+            };
+        }
+    });
+    
+    // If all images are already loaded, print immediately
+    if (loadedImages === images.length) {
+        window.print();
+    }
 }
 
 // Set maximum points and update button states
@@ -380,10 +290,6 @@ function updateVersion() {
         versionElement.textContent = `Version ${(currentVersion + 0.01).toFixed(2)}`;
     }
 }
-
-document.getElementById('printForce').addEventListener('click', function() {
-    window.print();
-});
 
 document.getElementById('deleteForce').addEventListener('click', function() {
     if (confirm('Are you sure you want to delete the entire force?')) {
