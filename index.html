@@ -49,18 +49,22 @@
             .card-container {
                 display: flex;
                 flex-wrap: wrap;
-                gap: 10px;
-                justify-content: center;
-                margin-top: 20px;
+                gap: 0.1in;
+                justify-content: flex-start;
+                margin-top: 0.2in;
             }
             .card {
-                width: 2.5in;
-                height: 3.5in;
+                width: 3.5in;
+                height: 2.5in;
                 border: 1px solid #ccc;
-                padding: 10px;
-                margin: 5px;
+                padding: 0.1in;
+                margin: 0.05in;
                 text-align: center;
                 page-break-inside: avoid;
+                transform: rotate(-90deg);
+                transform-origin: top left;
+                position: relative;
+                left: 2.5in;  /* Height of the card */
             }
             .card img {
                 width: 100%;
