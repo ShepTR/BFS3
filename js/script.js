@@ -53,6 +53,16 @@ function init() {
     // Initial updates
     updateUnitList();
     updateTotalPoints();
+    
+    // Automatically select "vehicle" and the first unit
+    unitTypeSelect.value = "vehicle";
+    updateUnitList();
+    
+    // Select the first unit in the list
+    if (unitSelect.options.length > 1) { // Check if there are units available
+        unitSelect.selectedIndex = 1; // Select the first unit (index 0 is the placeholder)
+        updateCardPreview(); // Update the card preview
+    }
 }
 
 // Update unit list based on selected type
