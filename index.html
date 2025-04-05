@@ -127,72 +127,84 @@
     <div class="main-container">
         <div class="content-container">
             <!-- Unit Selection Panel -->
-            <div class="unit-selection-panel">
-                <div class="card">
-                    <div class="card-header">
-                        <h3>Unit Selection</h3>
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="card">
+                        <div class="card-header">
+                            <h5 class="card-title mb-0">Unit Selection</h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="mb-3">
+                                <label for="unitType" class="form-label">Unit Type</label>
+                                <select class="form-select" id="unitType">
+                                    <option value="vehicle">Vehicle</option>
+                                    <option value="protomech">Protomech</option>
+                                    <option value="battlearmor">Battle Armor</option>
+                                    <option value="infantry">Infantry</option>
+                                </select>
+                            </div>
+                            <div class="mb-3">
+                                <label for="unitSelect" class="form-label">Select Unit</label>
+                                <select class="form-select" id="unitSelect">
+                                    <option value="">Choose a unit...</option>
+                                </select>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">Experience Level</label>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="radio" name="experience" id="regular" value="regular" checked>
+                                    <label class="form-check-label" for="regular">Regular</label>
+                                </div>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="radio" name="experience" id="veteran" value="veteran">
+                                    <label class="form-check-label" for="veteran">Veteran</label>
+                                </div>
+                            </div>
+                            <button class="btn btn-primary" id="addUnit">Add to Force</button>
+                        </div>
                     </div>
-                    <div class="card-body">
-                        <div class="mb-3">
-                            <label for="unitType" class="form-label">Unit Type</label>
-                            <select class="form-select" id="unitType">
-                                <option value="vehicle">Vehicle</option>
-                                <option value="protomech">ProtoMech</option>
-                                <option value="battlearmor">Battle Armor</option>
-                                <option value="infantry">Infantry</option>
-                            </select>
+                </div>
+                <div class="col-md-6">
+                    <div class="card">
+                        <div class="card-header">
+                            <h5 class="card-title mb-0">Card Preview</h5>
                         </div>
-                        <div class="mb-3">
-                            <label for="unitSelect" class="form-label">Select Unit</label>
-                            <select class="form-select" id="unitSelect">
-                                <option value="">Choose a unit...</option>
-                            </select>
-                        </div>
-                        <div class="mb-3">
-                            <label class="form-label">Experience Level:</label>
-                            <div class="form-check">
-                                <input class="form-check-input" type="radio" name="experience" id="regular" value="regular" checked>
-                                <label class="form-check-label" for="regular">Regular</label>
-                            </div>
-                            <div class="form-check">
-                                <input class="form-check-input" type="radio" name="experience" id="veteran" value="veteran">
-                                <label class="form-check-label" for="veteran">Veteran</label>
+                        <div class="card-body text-center">
+                            <div id="cardPreview" style="display: none;">
+                                <img id="previewCard" src="" alt="Unit Card Preview" style="max-width: 100%; height: auto;">
                             </div>
                         </div>
-                        <div class="card-preview" id="cardPreview" style="display: none;">
-                            <img id="previewCard" src="" alt="Unit Card Preview">
-                        </div>
-                        <button class="btn btn-primary w-100" id="addUnit">Add to Force</button>
                     </div>
                 </div>
             </div>
-            
-            <!-- Force List Panel -->
-            <div class="force-panel">
-                <div class="card h-100">
-                    <div class="force-header d-flex justify-content-between align-items-center">
-                        <h3>Your Force</h3>
-                        <div>
-                            <div class="d-flex align-items-center">
-                                <div class="me-3">
-                                    <div class="btn-group btn-group-sm me-2" role="group">
-                                        <button type="button" class="btn btn-outline-primary" id="scale1">Scale 1</button>
-                                        <button type="button" class="btn btn-outline-primary" id="scale2">Scale 2</button>
-                                        <button type="button" class="btn btn-outline-primary" id="scale3">Scale 3</button>
-                                    </div>
-                                    <div class="d-inline-block">
-                                        <label for="maxPoints" class="form-label mb-0">Max Points:</label>
-                                        <input type="number" id="maxPoints" class="form-control form-control-sm" style="width: 80px;" min="0" value="32">
-                                    </div>
-                                </div>
-                                <span class="badge bg-primary" id="totalPointsBadge">BFS Total: <span id="totalPoints">0</span></span>
+            <div class="row mt-4">
+                <div class="col-12">
+                    <div class="card">
+                        <div class="card-header d-flex justify-content-between align-items-center">
+                            <h5 class="card-title mb-0">Your Force</h5>
+                            <div>
+                                <span class="badge bg-primary" id="totalPointsBadge">Total Points: <span id="totalPoints">0</span></span>
                                 <button class="btn btn-danger ms-2" id="deleteForce">Delete Force</button>
                                 <button class="btn btn-success ms-2" id="printForce">Print Force</button>
                             </div>
                         </div>
-                    </div>
-                    <div class="force-body">
-                        <div id="forceList" class="card-container"></div>
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-md-8">
+                                    <div class="card-container" id="forceList"></div>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="card">
+                                        <div class="card-header">
+                                            <h6 class="card-title mb-0">Force List</h6>
+                                        </div>
+                                        <div class="card-body">
+                                            <ul class="list-group" id="forceListItems"></ul>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
