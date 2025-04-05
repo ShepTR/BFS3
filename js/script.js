@@ -269,7 +269,6 @@ function printForce() {
                     position: absolute;
                     width: 3.5in;
                     height: 2.5in;
-                    border: 1px solid #ccc;
                     padding: 0.1in;
                     margin: 0;
                     text-align: center;
