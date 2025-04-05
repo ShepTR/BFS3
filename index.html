@@ -18,8 +18,8 @@
             text-align: center;
         }
         .card-preview img {
-            width: 250px;  /* 2.5 inches at 100 DPI */
-            height: 350px; /* 3.5 inches at 100 DPI */
+            width: 350px;  /* 3.5 inches at 100 DPI */
+            height: 250px; /* 2.5 inches at 100 DPI */
             object-fit: contain;
         }
         .card-container {
@@ -30,8 +30,8 @@
             margin-top: 20px;
         }
         .card {
-            width: 250px;  /* 2.5 inches at 100 DPI */
-            height: 350px; /* 3.5 inches at 100 DPI */
+            width: 350px;  /* 3.5 inches at 100 DPI */
+            height: 250px; /* 2.5 inches at 100 DPI */
             border: 1px solid #ccc;
             padding: 10px;
             margin: 5px;
@@ -54,17 +54,18 @@
                 margin-top: 0.2in;
             }
             .card {
-                width: 3.5in;
-                height: 2.5in;
+                width: 2.5in;
+                height: 3.5in;
                 border: 1px solid #ccc;
                 padding: 0.1in;
                 margin: 0.05in;
                 text-align: center;
                 page-break-inside: avoid;
-                transform: rotate(-90deg);
+                transform: rotate(90deg);
                 transform-origin: top left;
                 position: relative;
-                left: 2.5in;  /* Height of the card */
+                left: 0;
+                margin-left: 3.5in; /* Width of the rotated card */
             }
             .card img {
                 width: 100%;
