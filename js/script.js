@@ -187,75 +187,122 @@ function deleteForce() {
 
 // Print force
 function printForce() {
-    // Show loading indicator
-    const loadingDiv = document.createElement('div');
-    loadingDiv.className = 'position-fixed top-50 start-50 translate-middle bg-white p-3 rounded shadow';
-    loadingDiv.innerHTML = `
-        <div class="text-center">
-            <div class="spinner-border text-primary mb-2" role="status">
-                <span class="visually-hidden">Loading...</span>
-            </div>
-            <div>Preparing print layout...</div>
-            <div id="loadingProgress" class="small text-muted mt-2">Loading images: 0/0</div>
-        </div>
-    `;
-    document.body.appendChild(loadingDiv);
-    
-    // Wait for all images to load
-    const images = document.querySelectorAll('.unit-card img');
-    let loadedImages = 0;
-    const totalImages = images.length;
-    
-    // Update progress display
-    const progressElement = document.getElementById('loadingProgress');
-    progressElement.textContent = `Loading images: 0/${totalImages}`;
-    
-    if (totalImages === 0) {
-        // No images to load, print immediately
-        setTimeout(() => {
-            window.print();
-            loadingDiv.remove();
-        }, 500);
+    // Create a new window
+    const printWindow = window.open('', '_blank');
+    if (!printWindow) {
+        alert('Please allow popups for this site to print your force.');
         return;
     }
-    
-    // Function to update progress
-    const updateProgress = () => {
-        loadedImages++;
-        progressElement.textContent = `Loading images: ${loadedImages}/${totalImages}`;
-        
-        // If all images are loaded, print after a short delay
-        if (loadedImages === totalImages) {
-            setTimeout(() => {
-                window.print();
-                loadingDiv.remove();
-            }, 500);
-        }
-    };
-    
-    // Check each image
-    images.forEach(img => {
-        if (img.complete) {
-            // Image already loaded
-            updateProgress();
-        } else {
-            // Image still loading
-            img.onload = updateProgress;
-            img.onerror = () => {
-                console.error(`Failed to load image: ${img.src}`);
-                updateProgress();
-            };
-        }
-    });
-    
-    // Fallback in case some images don't trigger onload
-    setTimeout(() => {
-        if (document.body.contains(loadingDiv)) {
-            console.warn('Print timeout reached, some images may not have loaded');
-            window.print();
-            loadingDiv.remove();
-        }
-    }, 15000); // 15 second timeout
+
+    // Create the print page HTML
+    const printContent = `
+        <!DOCTYPE html>
+        <html>
+        <head>
+            <title>BattleTech Force - Print View</title>
+            <style>
+                body {
+                    margin: 0;
+                    padding: 0.2in;
+                    background: white;
+                }
+                .card-container {
+                    display: flex;
+                    flex-wrap: wrap;
+                    gap: 0.1in;
+                    justify-content: flex-start;
+                }
+                .unit-card {
+                    width: 3.5in;
+                    height: 2.5in;
+                    border: 1px solid #ccc;
+                    padding: 0.1in;
+                    margin: 0.05in;
+                    text-align: center;
+                    page-break-inside: avoid;
+                    transform: rotate(90deg);
+                    transform-origin: top left;
+                    position: relative;
+                    left: 0;
+                    margin-left: 2.5in;
+                }
+                .unit-card img {
+                    width: 100%;
+                    height: 100%;
+                    object-fit: contain;
+                }
+                @media print {
+                    body {
+                        padding: 0;
+                    }
+                }
+            </style>
+        </head>
+        <body>
+            <div class="card-container" id="cardContainer"></div>
+            <script>
+                // Function to create and load images
+                function loadImages() {
+                    const container = document.getElementById('cardContainer');
+                    const units = ${JSON.stringify(currentForce)};
+                    
+                    units.forEach(unit => {
+                        const cardDiv = document.createElement('div');
+                        cardDiv.className = 'unit-card';
+                        
+                        const img = document.createElement('img');
+                        img.src = \`Cards/\${unit.FullName}.gif\`;
+                        img.alt = unit.FullName;
+                        
+                        cardDiv.appendChild(img);
+                        container.appendChild(cardDiv);
+                    });
+                    
+                    // Wait for all images to load
+                    const images = document.querySelectorAll('.unit-card img');
+                    let loadedImages = 0;
+                    
+                    function checkAllLoaded() {
+                        loadedImages++;
+                        if (loadedImages === images.length) {
+                            // All images loaded, print after a short delay
+                            setTimeout(() => {
+                                window.print();
+                                // Close the window after printing
+                                setTimeout(() => window.close(), 1000);
+                            }, 500);
+                        }
+                    }
+                    
+                    images.forEach(img => {
+                        if (img.complete) {
+                            checkAllLoaded();
+                        } else {
+                            img.onload = checkAllLoaded;
+                            img.onerror = () => {
+                                console.error(\`Failed to load image: \${img.src}\`);
+                                checkAllLoaded();
+                            };
+                        }
+                    });
+                    
+                    // Fallback in case some images don't trigger onload
+                    setTimeout(() => {
+                        window.print();
+                        setTimeout(() => window.close(), 1000);
+                    }, 15000);
+                }
+                
+                // Start loading images when the window is ready
+                window.onload = loadImages;
+            </script>
+        </body>
+        </html>
+    `;
+
+    // Write the content to the new window
+    printWindow.document.write(printContent);
+    printWindow.document.close();
 }
 
 // Initialize on load
