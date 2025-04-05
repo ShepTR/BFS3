@@ -4,36 +4,53 @@ let currentScale = 1;
 let maxPoints = 32;
 
 // DOM Elements
-const unitTypeSelect = document.getElementById('unitType');
-const unitSelect = document.getElementById('unitSelect');
-const regularRadio = document.getElementById('regular');
-const veteranRadio = document.getElementById('veteran');
-const addUnitButton = document.getElementById('addUnit');
-const forceList = document.getElementById('forceList');
-const forceListItems = document.getElementById('forceListItems');
-const previewCard = document.getElementById('previewCard');
-const cardPreview = document.getElementById('cardPreview');
-const totalPointsBadge = document.getElementById('totalPointsBadge');
-const totalPointsSpan = document.getElementById('totalPoints');
-const deleteForceButton = document.getElementById('deleteForce');
-const printForceButton = document.getElementById('printForce');
-const maxPointsInput = document.getElementById('maxPoints');
-
-// Event Listeners
-unitTypeSelect.addEventListener('change', updateUnitList);
-unitSelect.addEventListener('change', updateCardPreview);
-addUnitButton.addEventListener('click', addUnitToForce);
-deleteForceButton.addEventListener('click', deleteForce);
-printForceButton.addEventListener('click', printForce);
-maxPointsInput.addEventListener('change', updateMaxPoints);
-
-// Scale buttons
-document.getElementById('scale1').addEventListener('click', () => setScale(1));
-document.getElementById('scale2').addEventListener('click', () => setScale(2));
-document.getElementById('scale3').addEventListener('click', () => setScale(3));
+let unitTypeSelect;
+let unitSelect;
+let regularRadio;
+let veteranRadio;
+let addUnitButton;
+let forceList;
+let forceListItems;
+let previewCard;
+let cardPreview;
+let totalPointsBadge;
+let totalPointsSpan;
+let deleteForceButton;
+let printForceButton;
+let maxPointsInput;
 
 // Initialize
 function init() {
+    // Get DOM elements
+    unitTypeSelect = document.getElementById('unitType');
+    unitSelect = document.getElementById('unitSelect');
+    regularRadio = document.getElementById('regular');
+    veteranRadio = document.getElementById('veteran');
+    addUnitButton = document.getElementById('addUnit');
+    forceList = document.getElementById('forceList');
+    forceListItems = document.getElementById('forceListItems');
+    previewCard = document.getElementById('previewCard');
+    cardPreview = document.getElementById('cardPreview');
+    totalPointsBadge = document.getElementById('totalPointsBadge');
+    totalPointsSpan = document.getElementById('totalPoints');
+    deleteForceButton = document.getElementById('deleteForce');
+    printForceButton = document.getElementById('printForce');
+    maxPointsInput = document.getElementById('maxPoints');
+
+    // Add event listeners
+    unitTypeSelect.addEventListener('change', updateUnitList);
+    unitSelect.addEventListener('change', updateCardPreview);
+    addUnitButton.addEventListener('click', addUnitToForce);
+    deleteForceButton.addEventListener('click', deleteForce);
+    printForceButton.addEventListener('click', printForce);
+    maxPointsInput.addEventListener('change', updateMaxPoints);
+
+    // Scale buttons
+    document.getElementById('scale1').addEventListener('click', () => setScale(1));
+    document.getElementById('scale2').addEventListener('click', () => setScale(2));
+    document.getElementById('scale3').addEventListener('click', () => setScale(3));
+
+    // Initial updates
     updateUnitList();
     updateTotalPoints();
 }
