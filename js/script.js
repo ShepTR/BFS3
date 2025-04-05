@@ -41,14 +41,32 @@ function updateUnitList() {
     const selectedType = unitTypeSelect.value;
     unitSelect.innerHTML = '<option value="">Choose a unit...</option>';
     
-    if (selectedType && units[selectedType]) {
-        units[selectedType].forEach(unit => {
-            const option = document.createElement('option');
-            option.value = unit.FullName;
-            option.textContent = unit.FullName;
-            unitSelect.appendChild(option);
-        });
-    }
+    // Map the select value to the correct Type value
+    const typeMapping = {
+        'vehicle': ['Vehicle', 'VEHICLE', 'vehicle'],
+        'protomech': ['Protomech', 'PROTOMECH', 'protomech', 'ProtoMech', 'Proto-Mech'],
+        'battlearmor': ['BattleArmor', 'BATTLEARMOR', 'battlearmor', 'Battle Armor'],
+        'infantry': ['Infantry', 'INFANTRY', 'infantry']
+    };
+    
+    const correctType = typeMapping[selectedType];
+    
+    // Filter units based on type
+    const filteredUnits = unitData.filter(unit => {
+        return unit.UnitType && correctType.some(type => 
+            unit.UnitType.toLowerCase() === type.toLowerCase()
+        );
+    });
+    
+    // Sort units by name
+    filteredUnits.sort((a, b) => a.Name.localeCompare(b.Name));
+    
+    filteredUnits.forEach(unit => {
+        const option = document.createElement('option');
+        option.value = unit.FullName;
+        option.textContent = `${unit.Name} (PV: ${unit.RegPV}/${unit.VetPV})`;
+        unitSelect.appendChild(option);
+    });
     
     cardPreview.style.display = 'none';
     previewCard.src = '';
@@ -59,7 +77,7 @@ function updateCardPreview() {
     const selectedUnit = unitSelect.value;
     if (selectedUnit) {
         const unitType = unitTypeSelect.value;
-        const unit = units[unitType].find(u => u.FullName === selectedUnit);
+        const unit = unitData.find(u => u.FullName === selectedUnit);
         if (unit) {
             const cardPath = `Cards/${unit.FullName}.gif`;
             previewCard.src = cardPath;
@@ -77,11 +95,11 @@ function addUnitToForce() {
     if (!selectedUnit) return;
     
     const unitType = unitTypeSelect.value;
-    const unit = units[unitType].find(u => u.FullName === selectedUnit);
+    const unit = unitData.find(u => u.FullName === selectedUnit);
     if (!unit) return;
     
     const isVeteran = veteranCheckbox.checked;
-    const pv = isVeteran ? Math.ceil(unit.PV * 1.5) : unit.PV;
+    const pv = isVeteran ? Math.ceil(unit.VetPV) : unit.RegPV;
     
     const forceUnit = {
         ...unit,
