@@ -41,8 +41,8 @@ function populateUnitSelect(unitType) {
     // Map the select value to the correct Type value
     const typeMapping = {
         'vehicle': ['Vehicle', 'VEHICLE', 'vehicle'],
-        'protomech': ['Protomech', 'PROTOMECH', 'protomech'],
-        'battlearmor': ['BattleArmor', 'BATTLEARMOR', 'battlearmor'],
+        'protomech': ['Protomech', 'PROTOMECH', 'protomech', 'ProtoMech', 'Proto-Mech'],
+        'battlearmor': ['BattleArmor', 'BATTLEARMOR', 'battlearmor', 'Battle Armor'],
         'infantry': ['Infantry', 'INFANTRY', 'infantry']
     };
     
@@ -80,7 +80,7 @@ function updateCardPreview() {
     
     if (unitName) {
         // Update the card path based on unit type
-        const cardPath = `Cards/${unitType}/${unitName}.gif`;
+        const cardPath = `Cards/${unitType.charAt(0).toUpperCase() + unitType.slice(1)}/${unitName}.gif`;
         previewImage.src = cardPath;
         previewImage.alt = unitName;
         previewContainer.style.display = 'block';
