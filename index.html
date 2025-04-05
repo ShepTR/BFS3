@@ -9,6 +9,57 @@
         body {
             padding: 20px;
             background-color: #f8f9fa;
+            height: 100vh;
+            margin: 0;
+            overflow: hidden;
+        }
+        .main-container {
+            display: flex;
+            flex-direction: column;
+            height: calc(100vh - 40px);
+            overflow: hidden;
+        }
+        .content-container {
+            display: flex;
+            flex: 1;
+            gap: 20px;
+            overflow: hidden;
+            height: 100%;
+        }
+        .unit-selection-panel {
+            width: 400px;
+            flex-shrink: 0;
+            overflow-y: auto;
+            padding-right: 10px;
+        }
+        .force-panel {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            min-width: 0;
+            overflow: hidden;
+        }
+        .force-header {
+            padding: 15px;
+            background-color: #f8f9fa;
+            border-bottom: 1px solid #dee2e6;
+            flex-shrink: 0;
+        }
+        .force-body {
+            flex: 1;
+            overflow-y: auto;
+            padding: 20px;
+            min-height: 0;
+        }
+        .force-body .row {
+            margin: 0;
+            height: 100%;
+        }
+        .force-body .col-md-8,
+        .force-body .col-md-4 {
+            height: 100%;
+            overflow-y: auto;
+            padding: 0 10px;
         }
         .card {
             margin-bottom: 20px;
@@ -19,8 +70,8 @@
             margin-top: 20px;
         }
         .card-preview img {
-            width: 350px;  /* 3.5 inches at 100 DPI */
-            height: 250px; /* 2.5 inches at 100 DPI */
+            width: 350px;
+            height: 250px;
             object-fit: contain;
         }
         .force-list-item {
@@ -36,20 +87,68 @@
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
             gap: 20px;
-            padding: 20px;
+            padding-bottom: 20px;
+        }
+        .unit-type-section {
+            margin-bottom: 30px;
+        }
+        .unit-type-section h5 {
+            margin-bottom: 15px;
+            padding: 10px;
+            background-color: #f8f9fa;
+            border-radius: 4px;
         }
         .unit-card {
-            width: 350px;  /* 3.5 inches at 100 DPI */
-            height: 250px; /* 2.5 inches at 100 DPI */
+            min-height: 350px;
             border: 1px solid #ccc;
             padding: 10px;
-            margin: 5px;
             text-align: center;
+            display: flex;
+            flex-direction: column;
+            background: white;
+            border-radius: 4px;
         }
         .unit-card img {
-            width: 100%;
-            height: 100%;
+            max-width: 100%;
+            max-height: 250px;
             object-fit: contain;
+            margin-bottom: 10px;
+        }
+        .card-info {
+            margin-top: auto;
+            padding-top: 10px;
+            border-top: 1px solid #eee;
+        }
+        .force-list-container {
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+        }
+        .force-list-container .card {
+            height: 100%;
+            margin-bottom: 0;
+            display: flex;
+            flex-direction: column;
+        }
+        .force-list-container .card-body {
+            flex: 1;
+            overflow-y: auto;
+            padding: 15px;
+        }
+        #forceListItems {
+            margin: 0;
+            padding: 0;
+        }
+        .list-group-item {
+            margin-bottom: 5px;
+            border-radius: 4px !important;
+        }
+        .version {
+            position: fixed;
+            bottom: 10px;
+            right: 10px;
+            font-size: 0.8em;
+            color: #6c757d;
         }
         @media print {
             @page {
@@ -61,15 +160,15 @@
             }
             .card-container {
                 position: relative;
-                width: 10.5in;  /* 3 cards wide */
-                height: 7.5in;  /* 3 cards high */
+                width: 10.5in;
+                height: 7.5in;
                 margin: 0;
                 padding: 0;
             }
             .unit-card {
                 position: absolute;
-                width: 3.5in;  /* Standard card width */
-                height: 2.5in; /* Standard card height */
+                width: 3.5in;
+                height: 2.5in;
                 padding: 0.1in;
                 margin: 0;
                 text-align: center;
@@ -81,131 +180,91 @@
                 object-fit: contain;
             }
         }
-        .version {
-            position: fixed;
-            bottom: 10px;
-            right: 10px;
-            font-size: 0.8em;
-            color: #6c757d;
-        }
-        .main-container {
-            display: flex;
-            flex-direction: column;
-            height: 100vh;
-        }
-        .content-container {
-            display: flex;
-            flex: 1;
-            overflow: hidden;
-        }
-        .unit-selection-panel {
-            width: 25%;
-            min-width: 300px;
-            padding-right: 20px;
-        }
-        .force-panel {
-            flex: 1;
-            display: flex;
-            flex-direction: column;
-            overflow: hidden;
-        }
-        .force-header {
-            padding: 15px;
-            background-color: #f8f9fa;
-            border-bottom: 1px solid #dee2e6;
-        }
-        .force-body {
-            flex: 1;
-            overflow-y: auto;
-            padding: 20px;
-        }
     </style>
 </head>
 <body>
     <div class="main-container">
         <div class="content-container">
             <!-- Unit Selection Panel -->
-            <div class="row">
-                <div class="col-md-6">
-                    <div class="card">
-                        <div class="card-header">
-                            <h5 class="card-title mb-0">Unit Selection</h5>
+            <div class="unit-selection-panel">
+                <div class="card">
+                    <div class="card-header">
+                        <h5 class="card-title mb-0">Unit Selection</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="mb-3">
+                            <label for="unitType" class="form-label">Unit Type</label>
+                            <select id="unitType" class="form-select">
+                                <option value="vehicle">Vehicles</option>
+                                <option value="protomech">Protomechs</option>
+                                <option value="battlearmor">Battle Armor</option>
+                                <option value="infantry">Infantry</option>
+                                <option value="emplacement">Emplacements</option>
+                            </select>
                         </div>
-                        <div class="card-body">
-                            <div class="mb-3">
-                                <label for="unitType" class="form-label">Unit Type</label>
-                                <select class="form-select" id="unitType">
-                                    <option value="vehicle">Vehicle</option>
-                                    <option value="protomech">Protomech</option>
-                                    <option value="battlearmor">Battle Armor</option>
-                                    <option value="infantry">Infantry</option>
-                                    <option value="emplacement">Emplacement</option>
-                                </select>
-                            </div>
-                            <div class="mb-3">
-                                <label for="unitSelect" class="form-label">Select Unit</label>
-                                <select class="form-select" id="unitSelect">
-                                    <option value="">Choose a unit...</option>
-                                </select>
-                            </div>
-                            <div class="mb-3 text-center" style="min-height: 250px; display: flex; align-items: center; justify-content: center;">
-                                <div id="cardPreview" style="display: none;">
-                                    <img id="previewCard" src="" alt="Unit Card Preview" style="max-width: 100%; height: auto;">
-                                </div>
-                            </div>
-                            <div class="mb-3">
-                                <label class="form-label">Experience Level</label>
-                                <div class="form-check">
-                                    <input class="form-check-input" type="radio" name="experience" id="regular" value="regular" checked>
-                                    <label class="form-check-label" for="regular">Regular</label>
-                                </div>
-                                <div class="form-check">
-                                    <input class="form-check-input" type="radio" name="experience" id="veteran" value="veteran">
-                                    <label class="form-check-label" for="veteran">Veteran</label>
-                                </div>
-                            </div>
-                            <button class="btn btn-primary" id="addUnit">Add to Force</button>
+                        <div class="mb-3">
+                            <label for="unitSelect" class="form-label">Select Unit</label>
+                            <select class="form-select" id="unitSelect">
+                                <option value="">Choose a unit...</option>
+                            </select>
                         </div>
+                        <div class="mb-3 text-center" style="min-height: 250px; display: flex; align-items: center; justify-content: center;">
+                            <div id="cardPreview" style="display: none;">
+                                <img id="previewCard" src="" alt="Unit Card Preview" style="max-width: 100%; height: auto;">
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Experience Level</label>
+                            <div class="form-check">
+                                <input class="form-check-input" type="radio" name="experience" id="regular" value="regular" checked>
+                                <label class="form-check-label" for="regular">Regular</label>
+                            </div>
+                            <div class="form-check">
+                                <input class="form-check-input" type="radio" name="experience" id="veteran" value="veteran">
+                                <label class="form-check-label" for="veteran">Veteran</label>
+                            </div>
+                        </div>
+                        <button class="btn btn-primary" id="addUnit">Add to Force</button>
                     </div>
                 </div>
             </div>
-            <div class="row mt-4">
-                <div class="col-12">
-                    <div class="card">
-                        <div class="card-header d-flex justify-content-between align-items-center">
-                            <h5 class="card-title mb-0">Your Force</h5>
-                            <div>
-                                <div class="d-flex align-items-center">
-                                    <div class="me-3">
-                                        <div class="btn-group btn-group-sm me-2" role="group">
-                                            <button type="button" class="btn btn-outline-primary" id="scale1">Scale 1</button>
-                                            <button type="button" class="btn btn-outline-primary" id="scale2">Scale 2</button>
-                                            <button type="button" class="btn btn-outline-primary" id="scale3">Scale 3</button>
-                                        </div>
-                                        <div class="d-inline-block">
-                                            <label for="maxPoints" class="form-label mb-0">Max Points:</label>
-                                            <input type="number" id="maxPoints" class="form-control form-control-sm" style="width: 80px;" min="0" value="32">
-                                        </div>
-                                    </div>
-                                    <span class="badge bg-primary" id="totalPointsBadge">Total Points: <span id="totalPoints">0</span></span>
-                                    <button class="btn btn-danger ms-2" id="deleteForce">Delete Force</button>
-                                    <button class="btn btn-success ms-2" id="printForce">Print Force</button>
+
+            <!-- Force Panel -->
+            <div class="force-panel">
+                <div class="force-header">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <h5 class="mb-0">Your Force</h5>
+                        <div class="d-flex align-items-center">
+                            <div class="me-3">
+                                <div class="btn-group btn-group-sm me-2" role="group">
+                                    <button type="button" class="btn btn-outline-primary" id="scale1">Scale 1</button>
+                                    <button type="button" class="btn btn-outline-primary" id="scale2">Scale 2</button>
+                                    <button type="button" class="btn btn-outline-primary" id="scale3">Scale 3</button>
+                                </div>
+                                <div class="d-inline-block">
+                                    <label for="maxPoints" class="form-label mb-0">Max Points:</label>
+                                    <input type="number" id="maxPoints" class="form-control form-control-sm" style="width: 80px;" min="0" value="32">
                                 </div>
                             </div>
+                            <span class="badge bg-primary" id="totalPointsBadge">Total Points: <span id="totalPoints">0</span></span>
+                            <button class="btn btn-danger ms-2" id="deleteForce">Delete Force</button>
+                            <button class="btn btn-success ms-2" id="printForce">Print Force</button>
                         </div>
-                        <div class="card-body">
-                            <div class="row">
-                                <div class="col-md-8">
-                                    <div class="card-container" id="forceList"></div>
-                                </div>
-                                <div class="col-md-4">
-                                    <div class="card">
-                                        <div class="card-header">
-                                            <h6 class="card-title mb-0">Force List</h6>
-                                        </div>
-                                        <div class="card-body">
-                                            <ul class="list-group" id="forceListItems"></ul>
-                                        </div>
+                    </div>
+                </div>
+                <div class="force-body">
+                    <div class="row h-100">
+                        <div class="col-md-8">
+                            <div id="forceList"></div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="force-list-container">
+                                <div class="card">
+                                    <div class="card-header">
+                                        <h6 class="card-title mb-0">Force List</h6>
+                                    </div>
+                                    <div class="card-body">
+                                        <ul class="list-group" id="forceListItems"></ul>
                                     </div>
                                 </div>
                             </div>

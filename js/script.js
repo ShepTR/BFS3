@@ -1,9 +1,4 @@
 // Global variables
-let currentForce = [];
-let currentScale = 1;
-let maxPoints = 32;
-
-// DOM Elements
 let unitTypeSelect;
 let unitSelect;
 let regularRadio;
@@ -18,9 +13,13 @@ let totalPointsSpan;
 let deleteForceButton;
 let printForceButton;
 let maxPointsInput;
+let currentForce = [];
+let currentScale = 1;
+let maxPoints = 32;
 
 // Initialize
 function init() {
+    console.log('Initializing application...');
     // Get DOM elements
     unitTypeSelect = document.getElementById('unitType');
     unitSelect = document.getElementById('unitSelect');
@@ -37,6 +36,8 @@ function init() {
     printForceButton = document.getElementById('printForce');
     maxPointsInput = document.getElementById('maxPoints');
 
+    console.log('DOM elements initialized');
+
     // Add event listeners
     unitTypeSelect.addEventListener('change', updateUnitList);
     unitSelect.addEventListener('change', updateCardPreview);
@@ -44,6 +45,8 @@ function init() {
     deleteForceButton.addEventListener('click', deleteForce);
     printForceButton.addEventListener('click', printForce);
     maxPointsInput.addEventListener('change', updateMaxPoints);
+
+    console.log('Event listeners added');
 
     // Scale buttons
     document.getElementById('scale1').addEventListener('click', () => {
@@ -79,14 +82,19 @@ function init() {
         updateForceList();
     });
 
+    console.log('Scale buttons initialized');
+
     // Set initial unit type to vehicle and load units
     unitTypeSelect.value = "vehicle";
     updateUnitList();
+    
+    console.log('Initial unit list updated');
     
     // Select the first unit in the list
     if (unitSelect.options.length > 1) { // Check if there are units available
         unitSelect.selectedIndex = 1; // Select the first unit (index 0 is the placeholder)
         updateCardPreview(); // Update the card preview
+        console.log('First unit selected and preview updated');
     }
     
     // Set initial max points based on scale
@@ -95,127 +103,211 @@ function init() {
     
     // Update total points
     updateTotalPoints();
+    
+    console.log('Initialization complete');
 }
+
+// Wait for the page to load and units data to be available
+document.addEventListener('DOMContentLoaded', () => {
+    console.log('DOM Content Loaded');
+    // Check if units data is available
+    if (typeof units === 'undefined') {
+        console.error('Units data not loaded!');
+        return;
+    }
+    console.log('Units data loaded:', units.length, 'units available');
+    
+    // Initialize the application
+    init();
+});
 
 // Update unit list based on selected type
 function updateUnitList() {
     const selectedType = unitTypeSelect.value;
-    unitSelect.innerHTML = '<option value="">Choose a unit...</option>';
+    console.log('Selected unit type:', selectedType);
     
-    // Map the select value to the correct Type value
-    const typeMapping = {
-        'vehicle': ['Vehicle', 'VEHICLE', 'vehicle'],
-        'protomech': ['Protomech', 'PROTOMECH', 'protomech', 'ProtoMech', 'Proto-Mech'],
-        'battlearmor': ['BattleArmor', 'BATTLEARMOR', 'battlearmor', 'Battle Armor'],
-        'infantry': ['Infantry', 'INFANTRY', 'infantry'],
-        'emplacement': ['Emplacement', 'EMPLACEMENT', 'emplacement', 'Gun Emplacement', 'GunEmplacement']
-    };
+    // Clear current options
+    unitSelect.innerHTML = '';
     
-    const correctType = typeMapping[selectedType];
+    // Filter units by type and sort by name
+    const filteredUnits = units.filter(unit => {
+        // Convert both to lowercase for comparison
+        const unitType = unit.UnitType.toLowerCase();
+        const selectedTypeLower = selectedType.toLowerCase();
+        console.log('Comparing unit type:', unitType, 'with selected type:', selectedTypeLower);
+        return unitType === selectedTypeLower;
+    }).sort((a, b) => a.Name.localeCompare(b.Name));
     
-    // Filter units based on type
-    const filteredUnits = unitData.filter(unit => {
-        return unit.UnitType && correctType.some(type => 
-            unit.UnitType.toLowerCase() === type.toLowerCase()
-        );
-    });
+    console.log('Filtered units:', filteredUnits.length);
     
-    // Sort units by name
-    filteredUnits.sort((a, b) => a.Name.localeCompare(b.Name));
-    
+    // Add filtered units to select
     filteredUnits.forEach(unit => {
         const option = document.createElement('option');
         option.value = unit.FullName;
-        option.textContent = `${unit.Name} (PV: ${unit.RegPV}/${unit.VetPV})`;
+        const displayName = selectedType === 'battlearmor' ? unit.FullName : unit.Name;
+        option.textContent = `${displayName} (${unit.RegPV}/${unit.VetPV})`;
         unitSelect.appendChild(option);
     });
     
-    cardPreview.style.display = 'none';
-    previewCard.src = '';
+    // Select first unit if available
+    if (unitSelect.options.length > 0) {
+        unitSelect.selectedIndex = 0;
+        updateCardPreview();
+    }
 }
 
 // Update card preview
 function updateCardPreview() {
     const selectedUnit = unitSelect.value;
-    if (selectedUnit) {
-        const unitType = unitTypeSelect.value;
-        const unit = unitData.find(u => u.FullName === selectedUnit);
-        if (unit) {
-            const cardPath = `Cards/${unit.FullName.replace(/\//g, '-')}.gif`;
-            previewCard.src = cardPath;
-            cardPreview.style.display = 'block';
-        }
-    } else {
-        cardPreview.style.display = 'none';
-        previewCard.src = '';
+    const cardPreviewContainer = document.getElementById('cardPreview');
+    const previewCardImg = document.getElementById('previewCard');
+    
+    console.log('Updating preview for unit:', selectedUnit);
+    
+    if (!selectedUnit) {
+        cardPreviewContainer.style.display = 'none';
+        return;
+    }
+    
+    const unit = units.find(u => u.FullName === selectedUnit);
+    if (unit) {
+        const imagePath = 'Cards/' + unit.FullName.replace(/\//g, '-') + '.gif';
+        console.log('Loading card image:', imagePath);
+        
+        previewCardImg.src = imagePath;
+        cardPreviewContainer.style.display = 'block';
+        
+        previewCardImg.onerror = function() {
+            console.error('Failed to load card image:', imagePath);
+            cardPreviewContainer.style.display = 'none';
+        };
     }
 }
 
 // Add unit to force
 function addUnitToForce() {
     const selectedUnit = unitSelect.value;
-    if (!selectedUnit) return;
+    if (!selectedUnit) {
+        alert('Please select a unit first.');
+        return;
+    }
     
-    const unitType = unitTypeSelect.value;
-    const unit = unitData.find(u => u.FullName === selectedUnit);
-    if (!unit) return;
-    
-    const isVeteran = veteranRadio.checked;
-    const pv = isVeteran ? unit.VetPV : unit.RegPV;
-    
-    const forceUnit = {
-        ...unit,
-        PV: pv,
-        isVeteran
-    };
-    
-    currentForce.push(forceUnit);
-    updateForceList();
-    updateTotalPoints();
-    
-    // Keep the unit selected and preview visible
-    // Don't reset the selection
+    const unit = units.find(u => u.FullName === selectedUnit);
+    if (unit) {
+        const isVeteran = veteranRadio.checked;
+        currentForce.push({
+            ...unit,
+            isVeteran: isVeteran
+        });
+        
+        updateForceList();
+        updateTotalPoints();
+    }
 }
 
 // Update force list display
 function updateForceList() {
-    // Clear the force list and force list items
     forceList.innerHTML = '';
     forceListItems.innerHTML = '';
     
-    // Update the card display
-    currentForce.forEach((unit, index) => {
-        const cardDiv = document.createElement('div');
-        cardDiv.className = 'unit-card';
-        
-        const img = document.createElement('img');
-        img.src = `Cards/${unit.FullName.replace(/\//g, '-')}.gif`;
-        img.alt = unit.FullName;
-        
-        cardDiv.appendChild(img);
-        forceList.appendChild(cardDiv);
+    // Group units by type
+    const groupedUnits = {};
+    currentForce.forEach(unit => {
+        if (!groupedUnits[unit.UnitType]) {
+            groupedUnits[unit.UnitType] = [];
+        }
+        groupedUnits[unit.UnitType].push(unit);
     });
     
-    // Update the force list items
-    currentForce.forEach((unit, index) => {
-        const listItem = document.createElement('li');
-        listItem.className = 'list-group-item d-flex justify-content-between align-items-center';
+    // Create list items for each group
+    Object.entries(groupedUnits).forEach(([type, units]) => {
+        // Create section for this unit type
+        const typeSection = document.createElement('div');
+        typeSection.className = 'unit-type-section';
         
-        const unitInfo = document.createElement('div');
-        unitInfo.innerHTML = `
-            <strong>${unit.Name}</strong>
-            <span class="badge ${unit.isVeteran ? 'bg-warning' : 'bg-info'} ms-2">${unit.isVeteran ? 'Veteran' : 'Regular'}</span>
-            <span class="badge bg-primary ms-2">${unit.PV} PV</span>
-        `;
+        // Add type header
+        const typeHeader = document.createElement('h5');
+        typeHeader.textContent = type;
+        typeSection.appendChild(typeHeader);
         
-        const removeButton = document.createElement('button');
-        removeButton.className = 'btn btn-danger btn-sm';
-        removeButton.innerHTML = '&times;';
-        removeButton.onclick = () => removeUnit(index);
+        // Create card container for this type
+        const cardContainer = document.createElement('div');
+        cardContainer.className = 'card-container';
         
-        listItem.appendChild(unitInfo);
-        listItem.appendChild(removeButton);
-        forceListItems.appendChild(listItem);
+        // Add units of this type
+        units.forEach(unit => {
+            // Create card display
+            const cardDiv = document.createElement('div');
+            cardDiv.className = 'unit-card';
+            
+            const imgContainer = document.createElement('div');
+            imgContainer.style.flex = '1';
+            imgContainer.style.display = 'flex';
+            imgContainer.style.alignItems = 'center';
+            imgContainer.style.justifyContent = 'center';
+            
+            const img = document.createElement('img');
+            img.src = 'Cards/' + unit.FullName.replace(/\//g, '-') + '.gif';
+            img.alt = unit.Name;
+            
+            const pointValue = unit.isVeteran ? unit.VetPV : unit.RegPV;
+            const cardInfo = document.createElement('div');
+            cardInfo.className = 'card-info';
+            cardInfo.innerHTML = `
+                <strong>${unit.Name}</strong>
+                <div style="margin-top: 5px;">
+                    <span class="badge ${unit.isVeteran ? 'bg-warning' : 'bg-info'}">${unit.isVeteran ? 'Veteran' : 'Regular'}</span>
+                    <span class="badge bg-primary">${pointValue} PV</span>
+                </div>
+            `;
+            
+            const deleteButton = document.createElement('button');
+            deleteButton.className = 'btn btn-danger btn-sm position-absolute top-0 end-0 m-2';
+            deleteButton.innerHTML = '&times;';
+            deleteButton.onclick = () => {
+                const index = currentForce.indexOf(unit);
+                if (index > -1) {
+                    currentForce.splice(index, 1);
+                    updateForceList();
+                    updateTotalPoints();
+                }
+            };
+            
+            imgContainer.appendChild(img);
+            cardDiv.appendChild(imgContainer);
+            cardDiv.appendChild(cardInfo);
+            cardDiv.appendChild(deleteButton);
+            cardContainer.appendChild(cardDiv);
+            
+            // Create list item
+            const listItem = document.createElement('li');
+            listItem.className = 'list-group-item d-flex justify-content-between align-items-center';
+            listItem.innerHTML = `
+                <div>
+                    <strong>${unit.Name}</strong>
+                    <span class="badge ${unit.isVeteran ? 'bg-warning' : 'bg-info'}">${unit.isVeteran ? 'Veteran' : 'Regular'}</span>
+                    <span class="badge bg-primary">${pointValue} PV</span>
+                </div>
+            `;
+            
+            const listDeleteButton = document.createElement('button');
+            listDeleteButton.className = 'btn btn-danger btn-sm';
+            listDeleteButton.textContent = 'Remove';
+            listDeleteButton.onclick = () => {
+                const index = currentForce.indexOf(unit);
+                if (index > -1) {
+                    currentForce.splice(index, 1);
+                    updateForceList();
+                    updateTotalPoints();
+                }
+            };
+            
+            listItem.appendChild(listDeleteButton);
+            forceListItems.appendChild(listItem);
+        });
+        
+        typeSection.appendChild(cardContainer);
+        forceList.appendChild(typeSection);
     });
 }
 
@@ -228,7 +320,11 @@ function removeUnit(index) {
 
 // Update total points
 function updateTotalPoints() {
-    const total = currentForce.reduce((sum, unit) => sum + unit.PV, 0);
+    const total = currentForce.reduce((sum, unit) => {
+        const pointValue = unit.isVeteran ? unit.VetPV : unit.RegPV;
+        return sum + pointValue;
+    }, 0);
+    
     totalPointsSpan.textContent = total;
     
     // Update badge color and text based on points
@@ -266,6 +362,12 @@ function printForce() {
         alert('Please allow popups for this site to print your force.');
         return;
     }
+
+    // Calculate total points
+    const total = currentForce.reduce((sum, unit) => {
+        const pointValue = unit.isVeteran ? unit.VetPV : unit.RegPV;
+        return sum + pointValue;
+    }, 0);
 
     // Create the print page HTML
     const printContent = `
@@ -310,7 +412,11 @@ function printForce() {
                     page-break-before: always;
                 }
                 .force-list h3 {
+                    margin-bottom: 0.2in;
+                }
+                .force-list .points-info {
                     margin-bottom: 0.5in;
+                    font-size: 1.2em;
                 }
                 .force-list ul {
                     list-style: none;
@@ -326,12 +432,22 @@ function printForce() {
                 .force-list .badge {
                     margin-left: 0.2in;
                 }
+                .points-exceeded {
+                    color: red;
+                }
             </style>
         </head>
         <body>
             <div id="cardPages"></div>
             <div class="force-list">
                 <h3>Force List</h3>
+                <div class="points-info">
+                    <div>Max Points: ${maxPoints}</div>
+                    <div class="${total > maxPoints ? 'points-exceeded' : ''}">
+                        Total Points: ${total}
+                        ${total > maxPoints ? ` (${total - maxPoints} over limit)` : ''}
+                    </div>
+                </div>
                 <ul id="forceListItems"></ul>
             </div>
             <script>
@@ -372,12 +488,13 @@ function printForce() {
                     
                     // Create force list
                     units.forEach(unit => {
+                        const pointValue = unit.isVeteran ? unit.VetPV : unit.RegPV;
                         const listItem = document.createElement('li');
                         listItem.innerHTML = \`
                             <div>
                                 <strong>\${unit.Name}</strong>
                                 <span class="badge \${unit.isVeteran ? 'bg-warning' : 'bg-info'}">\${unit.isVeteran ? 'Veteran' : 'Regular'}</span>
-                                <span class="badge bg-primary">\${unit.PV} PV</span>
+                                <span class="badge bg-primary">\${pointValue} PV</span>
                             </div>
                         \`;
                         forceListItems.appendChild(listItem);
@@ -428,7 +545,4 @@ function printForce() {
     // Write the content to the new window
     printWindow.document.write(printContent);
     printWindow.document.close();
-}
-
-// Initialize on load
-document.addEventListener('DOMContentLoaded', init); 
+} 
