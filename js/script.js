@@ -158,13 +158,7 @@ function updateForceList() {
         img.src = `Cards/${unit.FullName.replace(/\//g, '-')}.gif`;
         img.alt = unit.FullName;
         
-        const removeButton = document.createElement('button');
-        removeButton.className = 'btn btn-danger btn-sm position-absolute top-0 end-0 m-2';
-        removeButton.innerHTML = '&times;';
-        removeButton.onclick = () => removeUnit(index);
-        
         cardDiv.appendChild(img);
-        cardDiv.appendChild(removeButton);
         forceList.appendChild(cardDiv);
     });
     
