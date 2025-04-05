@@ -52,30 +52,29 @@
             object-fit: contain;
         }
         @media print {
+            @page {
+                size: landscape;
+                margin: 0.2in;
+            }
             .no-print {
                 display: none;
             }
             .card-container {
-                display: flex;
-                flex-wrap: wrap;
-                gap: 0.1in;
-                justify-content: flex-start;
-                margin-top: 0.2in;
-                margin-left: 0.2in;
+                position: relative;
+                width: 10.5in;  /* 3 cards wide */
+                height: 7.5in;  /* 3 cards high */
+                margin: 0;
+                padding: 0;
             }
             .unit-card {
+                position: absolute;
                 width: 3.5in;  /* Standard card width */
                 height: 2.5in; /* Standard card height */
                 border: 1px solid #ccc;
                 padding: 0.1in;
-                margin: 0.05in;
+                margin: 0;
                 text-align: center;
                 page-break-inside: avoid;
-                transform: rotate(90deg);
-                transform-origin: top left;
-                position: relative;
-                left: 0;
-                margin-left: 2.5in; /* Width of the rotated card */
             }
             .unit-card img {
                 width: 100%;

@@ -250,8 +250,8 @@ function printForce() {
             <title>BattleTech Force - Print View</title>
             <style>
                 @page {
-                    margin: 0;
-                    padding: 0;
+                    size: landscape;
+                    margin: 0.2in;
                 }
                 body {
                     margin: 0;
@@ -260,8 +260,8 @@ function printForce() {
                 }
                 .card-container {
                     position: relative;
-                    width: 10.5in;
-                    height: 7.5in;
+                    width: 10.5in;  /* 3 cards wide */
+                    height: 7.5in;  /* 3 cards high */
                     margin: 0;
                     padding: 0;
                 }
@@ -270,11 +270,10 @@ function printForce() {
                     width: 3.5in;
                     height: 2.5in;
                     border: 1px solid #ccc;
-                    padding: 0;
+                    padding: 0.1in;
                     margin: 0;
                     text-align: center;
-                    transform: rotate(90deg);
-                    transform-origin: top left;
+                    page-break-inside: avoid;
                 }
                 .unit-card img {
                     width: 100%;
