@@ -10,6 +10,7 @@ const regularRadio = document.getElementById('regular');
 const veteranRadio = document.getElementById('veteran');
 const addUnitButton = document.getElementById('addUnit');
 const forceList = document.getElementById('forceList');
+const forceListItems = document.getElementById('forceListItems');
 const previewCard = document.getElementById('previewCard');
 const cardPreview = document.getElementById('cardPreview');
 const totalPointsBadge = document.getElementById('totalPointsBadge');
@@ -112,14 +113,13 @@ function addUnitToForce() {
     updateForceList();
     updateTotalPoints();
     
-    // Reset selection
-    unitSelect.value = '';
-    cardPreview.style.display = 'none';
-    previewCard.src = '';
+    // Keep the unit selected and preview visible
+    // Don't reset the selection
 }
 
 // Update force list display
 function updateForceList() {
+    // Update the card display
     forceList.innerHTML = '';
     
     currentForce.forEach((unit, index) => {
@@ -138,6 +138,30 @@ function updateForceList() {
         cardDiv.appendChild(img);
         cardDiv.appendChild(removeButton);
         forceList.appendChild(cardDiv);
+    });
+    
+    // Update the force list items
+    forceListItems.innerHTML = '';
+    
+    currentForce.forEach((unit, index) => {
+        const listItem = document.createElement('li');
+        listItem.className = 'list-group-item d-flex justify-content-between align-items-center';
+        
+        const unitInfo = document.createElement('div');
+        unitInfo.innerHTML = `
+            <strong>${unit.Name}</strong>
+            <span class="badge ${unit.isVeteran ? 'bg-warning' : 'bg-info'} ms-2">${unit.isVeteran ? 'Veteran' : 'Regular'}</span>
+            <span class="badge bg-primary ms-2">${unit.PV} PV</span>
+        `;
+        
+        const removeButton = document.createElement('button');
+        removeButton.className = 'btn btn-danger btn-sm';
+        removeButton.innerHTML = '&times;';
+        removeButton.onclick = () => removeUnit(index);
+        
+        listItem.appendChild(unitInfo);
+        listItem.appendChild(removeButton);
+        forceListItems.appendChild(listItem);
     });
 }
 
