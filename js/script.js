@@ -203,14 +203,15 @@ function updateTotalPoints() {
     const total = currentForce.reduce((sum, unit) => sum + unit.PV, 0);
     totalPointsSpan.textContent = total;
     
-    // Update badge color and show warning based on points
+    // Update badge color and text based on points
     if (total > maxPoints) {
         totalPointsBadge.classList.remove('bg-primary');
         totalPointsBadge.classList.add('bg-danger');
-        alert(`Warning: Your force exceeds the maximum points (${maxPoints}) by ${total - maxPoints} points!`);
+        totalPointsBadge.textContent = `Total Points Exceeded! (${total - maxPoints} over limit)`;
     } else {
         totalPointsBadge.classList.remove('bg-danger');
         totalPointsBadge.classList.add('bg-primary');
+        totalPointsBadge.textContent = `Total Points: ${total}`;
     }
 }
 
