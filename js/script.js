@@ -372,4 +372,16 @@ function updateVersion() {
         const currentVersion = parseFloat(versionElement.textContent.replace('Version ', ''));
         versionElement.textContent = `Version ${(currentVersion + 0.01).toFixed(2)}`;
     }
-} 
+}
+
+document.getElementById('printForce').addEventListener('click', function() {
+    window.print();
+});
+
+document.getElementById('deleteForce').addEventListener('click', function() {
+    if (confirm('Are you sure you want to delete the entire force?')) {
+        selectedUnits = [];
+        updateForceDisplay();
+        updateTotalPoints();
+    }
+}); 
