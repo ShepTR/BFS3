@@ -40,10 +40,10 @@ function populateUnitSelect(unitType) {
     
     // Map the select value to the correct Type value
     const typeMapping = {
-        'vehicle': ['Vehicle'],
-        'protomech': ['Protomech'],
-        'battlearmor': ['BattleArmor'],
-        'infantry': ['Infantry']
+        'vehicle': ['Vehicle', 'VEHICLE', 'vehicle'],
+        'protomech': ['Protomech', 'PROTOMECH', 'protomech'],
+        'battlearmor': ['BattleArmor', 'BATTLEARMOR', 'battlearmor'],
+        'infantry': ['Infantry', 'INFANTRY', 'infantry']
     };
     
     const correctType = typeMapping[unitType];
@@ -52,13 +52,16 @@ function populateUnitSelect(unitType) {
     console.log('Correct type array:', correctType);
     console.log('First unit in data:', unitData[0]);
     console.log('First unit type:', unitData[0].UnitType);
+    console.log('Total units in data:', unitData.length);
     
     // Filter units based on type
     const filteredUnits = unitData.filter(unit => {
-        const matches = correctType.includes(unit.UnitType);
+        const matches = unit.UnitType && correctType.some(type => unit.UnitType.toLowerCase() === type.toLowerCase());
         console.log('Checking unit:', unit.Name, 'Type:', unit.UnitType, 'Matches:', matches);
         return matches;
     });
+    
+    console.log('Filtered units count:', filteredUnits.length);
     
     filteredUnits.forEach(unit => {
         const option = document.createElement('option');
