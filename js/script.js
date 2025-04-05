@@ -153,7 +153,7 @@ function updateForceList() {
         cardDiv.className = 'unit-card';
         
         const img = document.createElement('img');
-        img.src = `Cards/${unit.FullName}.gif`;
+        img.src = `Cards/${unit.FullName.replace(/\//g, '-')}.gif`;
         img.alt = unit.FullName;
         
         const removeButton = document.createElement('button');
