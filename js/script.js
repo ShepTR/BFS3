@@ -50,13 +50,12 @@ function init() {
     document.getElementById('scale2').addEventListener('click', () => setScale(2));
     document.getElementById('scale3').addEventListener('click', () => setScale(3));
 
+    // Set initial unit type to vehicle
+    unitTypeSelect.value = "vehicle";
+    
     // Initial updates
     updateUnitList();
     updateTotalPoints();
-    
-    // Automatically select "vehicle" and the first unit
-    unitTypeSelect.value = "vehicle";
-    updateUnitList();
     
     // Select the first unit in the list
     if (unitSelect.options.length > 1) { // Check if there are units available
