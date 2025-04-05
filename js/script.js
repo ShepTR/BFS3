@@ -268,9 +268,10 @@ function printForce() {
                     grid-template-columns: repeat(3, 3.5in);
                     grid-template-rows: repeat(3, 2.5in);
                     gap: 0;
-                    justify-content: center;
+                    justify-content: start;
                     padding: 0;
                     margin: 0;
+                    width: 10.5in;
                 }
                 .unit-card {
                     width: 3.5in;
