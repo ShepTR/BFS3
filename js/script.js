@@ -50,18 +50,18 @@ function init() {
     document.getElementById('scale2').addEventListener('click', () => setScale(2));
     document.getElementById('scale3').addEventListener('click', () => setScale(3));
 
-    // Set initial unit type to vehicle
+    // Set initial unit type to vehicle and load units
     unitTypeSelect.value = "vehicle";
-    
-    // Initial updates
     updateUnitList();
-    updateTotalPoints();
     
     // Select the first unit in the list
     if (unitSelect.options.length > 1) { // Check if there are units available
         unitSelect.selectedIndex = 1; // Select the first unit (index 0 is the placeholder)
         updateCardPreview(); // Update the card preview
     }
+    
+    // Update total points
+    updateTotalPoints();
 }
 
 // Update unit list based on selected type
