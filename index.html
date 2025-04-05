@@ -4,42 +4,49 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>BattleTech Force Builder</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link href="css/style.css" rel="stylesheet">
-    <script>
-        console.log('Debug: Page starting to load');
-        window.addEventListener('error', function(e) {
-            console.log('Script error:', e);
-        });
-    </script>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
     <style>
+        body {
+            padding: 20px;
+            background-color: #f8f9fa;
+        }
+        .card {
+            margin-bottom: 20px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
         .card-preview {
-            margin-top: 20px;
             text-align: center;
+            margin-top: 20px;
         }
         .card-preview img {
             width: 350px;  /* 3.5 inches at 100 DPI */
             height: 250px; /* 2.5 inches at 100 DPI */
             object-fit: contain;
         }
-        .card-container {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 10px;
-            justify-content: flex-start;
-            margin-top: 20px;
-            width: 100%;
+        .force-list-item {
+            background-color: #f8f9fa;
+            margin-bottom: 10px;
+            padding: 10px;
+            border-radius: 5px;
         }
-        .card {
+        .force-list-item:hover {
+            background-color: #e9ecef;
+        }
+        .card-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+            gap: 20px;
+            padding: 20px;
+        }
+        .unit-card {
             width: 350px;  /* 3.5 inches at 100 DPI */
             height: 250px; /* 2.5 inches at 100 DPI */
             border: 1px solid #ccc;
             padding: 10px;
             margin: 5px;
             text-align: center;
-            flex: 0 0 auto;
         }
-        .card img {
+        .unit-card img {
             width: 100%;
             height: 100%;
             object-fit: contain;
@@ -56,7 +63,7 @@
                 margin-top: 0.2in;
                 margin-left: 0.2in;
             }
-            .card {
+            .unit-card {
                 width: 3.5in;  /* Standard card width */
                 height: 2.5in; /* Standard card height */
                 border: 1px solid #ccc;
@@ -70,67 +77,97 @@
                 left: 0;
                 margin-left: 2.5in; /* Width of the rotated card */
             }
-            .card img {
+            .unit-card img {
                 width: 100%;
                 height: 100%;
                 object-fit: contain;
             }
         }
+        .version {
+            position: fixed;
+            bottom: 10px;
+            right: 10px;
+            font-size: 0.8em;
+            color: #6c757d;
+        }
+        .main-container {
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+        }
+        .content-container {
+            display: flex;
+            flex: 1;
+            overflow: hidden;
+        }
+        .unit-selection-panel {
+            width: 25%;
+            min-width: 300px;
+            padding-right: 20px;
+        }
+        .force-panel {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+        .force-header {
+            padding: 15px;
+            background-color: #f8f9fa;
+            border-bottom: 1px solid #dee2e6;
+        }
+        .force-body {
+            flex: 1;
+            overflow-y: auto;
+            padding: 20px;
+        }
     </style>
 </head>
 <body>
-    <div class="container-fluid">
-        <div class="row">
+    <div class="main-container">
+        <div class="content-container">
             <!-- Unit Selection Panel -->
-            <div class="col-md-3">
+            <div class="unit-selection-panel">
                 <div class="card">
                     <div class="card-header">
                         <h3>Unit Selection</h3>
                     </div>
                     <div class="card-body">
-                        <div class="row mb-3">
-                            <div class="col">
-                                <label for="unitType" class="form-label">Unit Type</label>
-                                <select id="unitType" class="form-select">
-                                    <option value="vehicle">Vehicle</option>
-                                    <option value="protomech">Protomech</option>
-                                    <option value="battlearmor">Battle Armor</option>
-                                    <option value="infantry">Infantry</option>
-                                </select>
-                            </div>
-                        </div>
-                        <div class="row mb-3">
-                            <div class="col">
-                                <label for="unitSelect" class="form-label">Select Unit</label>
-                                <select id="unitSelect" class="form-select">
-                                    <option value="">Choose a unit...</option>
-                                </select>
-                            </div>
-                        </div>
-                        <div id="cardPreview" class="text-center mb-3">
-                            <img id="previewCard" src="" alt="Unit Card Preview" style="display: none; max-width: 300px;">
+                        <div class="mb-3">
+                            <label for="unitType" class="form-label">Unit Type</label>
+                            <select class="form-select" id="unitType">
+                                <option value="vehicle">Vehicle</option>
+                                <option value="protomech">ProtoMech</option>
+                                <option value="battlearmor">Battle Armor</option>
+                                <option value="infantry">Infantry</option>
+                            </select>
                         </div>
                         <div class="mb-3">
-                            <label class="form-label">Experience Level:</label>
+                            <label for="unitSelect" class="form-label">Select Unit</label>
+                            <select class="form-select" id="unitSelect">
+                                <option value="">Choose a unit...</option>
+                            </select>
+                        </div>
+                        <div class="mb-3">
                             <div class="form-check">
-                                <input class="form-check-input" type="radio" name="experience" id="regular" value="regular" checked>
-                                <label class="form-check-label" for="regular">Regular</label>
-                            </div>
-                            <div class="form-check">
-                                <input class="form-check-input" type="radio" name="experience" id="veteran" value="veteran">
-                                <label class="form-check-label" for="veteran">Veteran</label>
+                                <input class="form-check-input" type="checkbox" id="veteran">
+                                <label class="form-check-label" for="veteran">
+                                    Veteran (1.5x PV)
+                                </label>
                             </div>
                         </div>
-                        <button class="btn btn-primary" id="addUnit">Add Unit</button>
-                        <div class="mt-2 version">Version 0.32</div>
+                        <div class="card-preview" id="cardPreview" style="display: none;">
+                            <img id="previewCard" src="" alt="Unit Card Preview">
+                        </div>
+                        <button class="btn btn-primary w-100" id="addUnit">Add to Force</button>
                     </div>
                 </div>
             </div>
-
+            
             <!-- Force List Panel -->
-            <div class="col-md-9">
+            <div class="force-panel">
                 <div class="card h-100">
-                    <div class="card-header d-flex justify-content-between align-items-center">
+                    <div class="force-header d-flex justify-content-between align-items-center">
                         <h3>Your Force</h3>
                         <div>
                             <div class="d-flex align-items-center">
@@ -151,19 +188,17 @@
                             </div>
                         </div>
                     </div>
-                    <div class="card-body" style="overflow-y: auto; height: calc(100vh - 200px);">
+                    <div class="force-body">
                         <div id="forceList" class="card-container"></div>
                     </div>
                 </div>
             </div>
         </div>
     </div>
-
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-    <script>console.log('Debug: Loading units.js');</script>
+    
+    <div class="version">Version 1.0</div>
+    
     <script src="js/units.js"></script>
-    <script>console.log('Debug: Loading script.js');</script>
     <script src="js/script.js"></script>
-    <script>console.log('Debug: All scripts loaded');</script>
 </body>
 </html> 

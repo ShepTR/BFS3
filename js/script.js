@@ -1,303 +1,216 @@
 // Global variables
-let selectedUnits = [];
-let totalPoints = 0;
+let currentForce = [];
+let currentScale = 1;
+let maxPoints = 32;
 
-// Initialize the application
-document.addEventListener('DOMContentLoaded', function() {
-    // Add event listener for unit type change
-    document.getElementById('unitType').addEventListener('change', function() {
-        const unitType = this.value;
-        populateUnitSelect(unitType);
-        // Clear the card preview when type changes
-        document.getElementById('cardPreview').style.display = 'none';
-    });
-    
-    // Initialize with vehicles
-    populateUnitSelect('vehicle');
-    
-    // Add event listeners
-    document.getElementById('addUnit').addEventListener('click', addUnitToForce);
-    document.getElementById('printForce').addEventListener('click', printForce);
-    document.getElementById('unitSelect').addEventListener('change', updateCardPreview);
-    document.getElementById('maxPoints').addEventListener('input', updateForceDisplay);
-    
-    // Add scale button event listeners
-    document.getElementById('scale1').addEventListener('click', () => setMaxPoints(32));
-    document.getElementById('scale2').addEventListener('click', () => setMaxPoints(64));
-    document.getElementById('scale3').addEventListener('click', () => setMaxPoints(96));
-    
-    // Set initial scale to 1
-    setMaxPoints(32);
-    
-    // Initialize version
-    updateVersion();
-});
+// DOM Elements
+const unitTypeSelect = document.getElementById('unitType');
+const unitSelect = document.getElementById('unitSelect');
+const veteranCheckbox = document.getElementById('veteran');
+const addUnitButton = document.getElementById('addUnit');
+const forceList = document.getElementById('forceList');
+const previewCard = document.getElementById('previewCard');
+const cardPreview = document.getElementById('cardPreview');
+const totalPointsBadge = document.getElementById('totalPointsBadge');
+const totalPointsSpan = document.getElementById('totalPoints');
+const deleteForceButton = document.getElementById('deleteForce');
+const printForceButton = document.getElementById('printForce');
+const maxPointsInput = document.getElementById('maxPoints');
 
-// Populate the unit select dropdown based on unit type
-function populateUnitSelect(unitType) {
-    const select = document.getElementById('unitSelect');
-    select.innerHTML = '<option value="">Choose a unit...</option>';
+// Event Listeners
+unitTypeSelect.addEventListener('change', updateUnitList);
+unitSelect.addEventListener('change', updateCardPreview);
+addUnitButton.addEventListener('click', addUnitToForce);
+deleteForceButton.addEventListener('click', deleteForce);
+printForceButton.addEventListener('click', printForce);
+maxPointsInput.addEventListener('change', updateMaxPoints);
+
+// Scale buttons
+document.getElementById('scale1').addEventListener('click', () => setScale(1));
+document.getElementById('scale2').addEventListener('click', () => setScale(2));
+document.getElementById('scale3').addEventListener('click', () => setScale(3));
+
+// Initialize
+function init() {
+    updateUnitList();
+    updateTotalPoints();
+}
+
+// Update unit list based on selected type
+function updateUnitList() {
+    const selectedType = unitTypeSelect.value;
+    unitSelect.innerHTML = '<option value="">Choose a unit...</option>';
     
-    // Map the select value to the correct Type value
-    const typeMapping = {
-        'vehicle': ['Vehicle', 'VEHICLE', 'vehicle'],
-        'protomech': ['Protomech', 'PROTOMECH', 'protomech', 'ProtoMech', 'Proto-Mech'],
-        'battlearmor': ['BattleArmor', 'BATTLEARMOR', 'battlearmor', 'Battle Armor'],
-        'infantry': ['Infantry', 'INFANTRY', 'infantry']
+    if (selectedType && units[selectedType]) {
+        units[selectedType].forEach(unit => {
+            const option = document.createElement('option');
+            option.value = unit.FullName;
+            option.textContent = unit.FullName;
+            unitSelect.appendChild(option);
+        });
+    }
+    
+    cardPreview.style.display = 'none';
+    previewCard.src = '';
+}
+
+// Update card preview
+function updateCardPreview() {
+    const selectedUnit = unitSelect.value;
+    if (selectedUnit) {
+        const unitType = unitTypeSelect.value;
+        const unit = units[unitType].find(u => u.FullName === selectedUnit);
+        if (unit) {
+            const cardPath = `Cards/${unit.FullName}.gif`;
+            previewCard.src = cardPath;
+            cardPreview.style.display = 'block';
+        }
+    } else {
+        cardPreview.style.display = 'none';
+        previewCard.src = '';
+    }
+}
+
+// Add unit to force
+function addUnitToForce() {
+    const selectedUnit = unitSelect.value;
+    if (!selectedUnit) return;
+    
+    const unitType = unitTypeSelect.value;
+    const unit = units[unitType].find(u => u.FullName === selectedUnit);
+    if (!unit) return;
+    
+    const isVeteran = veteranCheckbox.checked;
+    const pv = isVeteran ? Math.ceil(unit.PV * 1.5) : unit.PV;
+    
+    const forceUnit = {
+        ...unit,
+        PV: pv,
+        isVeteran
     };
     
-    const correctType = typeMapping[unitType];
-    console.log('Unit type selected:', unitType);
-    console.log('Type mapping:', typeMapping);
-    console.log('Correct type array:', correctType);
-    console.log('First unit in data:', unitData[0]);
-    console.log('First unit type:', unitData[0].UnitType);
-    console.log('Total units in data:', unitData.length);
+    currentForce.push(forceUnit);
+    updateForceList();
+    updateTotalPoints();
     
-    // Filter units based on type
-    const filteredUnits = unitData.filter(unit => {
-        const matches = unit.UnitType && correctType.some(type => unit.UnitType.toLowerCase() === type.toLowerCase());
-        console.log('Checking unit:', unit.Name, 'Type:', unit.UnitType, 'Matches:', matches);
-        return matches;
-    });
-    
-    console.log('Filtered units count:', filteredUnits.length);
-    
-    filteredUnits.forEach(unit => {
-        const option = document.createElement('option');
-        option.value = unit.Name;
-        option.textContent = `${unit.Name} (PV: ${unit.RegPV}/${unit.VetPV})`;
-        select.appendChild(option);
-    });
+    // Reset selection
+    unitSelect.value = '';
+    cardPreview.style.display = 'none';
+    previewCard.src = '';
 }
 
-// Update the card preview when a unit is selected
-function updateCardPreview() {
-    const unitName = document.getElementById('unitSelect').value;
-    const unitType = document.getElementById('unitType').value;
-    const previewContainer = document.getElementById('cardPreview');
-    const previewImage = document.getElementById('previewCard');
-    
-    if (unitName) {
-        // Find the unit in unitData to get its exact type and full name
-        const unit = unitData.find(u => u.Name === unitName);
-        console.log('Selected unit:', unit);
-        
-        // Update the card path using FullName
-        const cardPath = `Cards/${unit.FullName}.gif`;
-        console.log('Attempting to load card from:', cardPath);
-        
-        previewImage.src = cardPath;
-        previewImage.alt = unitName;
-        previewContainer.style.display = 'block';
-        
-        // Add error handling for missing images
-        previewImage.onerror = function() {
-            console.log('Failed to load card image:', cardPath);
-            this.src = 'images/missing-card.gif';
-            this.alt = `${unitName} (Card not found)`;
-        };
-        
-        // Add success handler
-        previewImage.onload = function() {
-            console.log('Successfully loaded card image:', cardPath);
-        };
-    } else {
-        previewContainer.style.display = 'none';
-    }
-}
-
-// Add a unit to the force
-function addUnitToForce() {
-    const unitName = document.getElementById('unitSelect').value;
-    const unitType = document.getElementById('unitType').value;
-    if (!unitName) return;
-
-    const isVeteran = document.getElementById('veteran').checked;
-    const unit = unitData.find(u => u.Name === unitName);
-    
-    if (unit) {
-        const points = isVeteran ? unit.VetPV : unit.RegPV;
-        const unitEntry = {
-            name: unitName,
-            points: points,
-            isVeteran: isVeteran,
-            type: unitType,
-            cardPath: `Cards/${unit.FullName}.gif`
-        };
-        
-        selectedUnits.push(unitEntry);
-        totalPoints += points;
-        
-        updateForceDisplay();
-        updateCardsDisplay();
-    }
-}
-
-// Update the force list display
-function updateForceDisplay() {
-    const forceList = document.getElementById('forceList');
-    const totalPointsElement = document.getElementById('totalPoints');
-    const totalPointsBadge = document.getElementById('totalPointsBadge');
-    const maxPoints = parseInt(document.getElementById('maxPoints').value) || 0;
-    
-    if (!forceList) return; // Guard against missing element
-    
-    // Clear the force list
+// Update force list display
+function updateForceList() {
     forceList.innerHTML = '';
     
-    // Add each unit individually
-    selectedUnits.forEach((unit, index) => {
-        const unitElement = document.createElement('div');
-        unitElement.className = 'force-list-item d-flex justify-content-between align-items-center mb-2 p-2 border rounded';
-        
-        const nameSpan = document.createElement('span');
-        nameSpan.textContent = `${unit.name} (${unit.isVeteran ? 'Veteran' : 'Regular'}) - ${unit.points} PV`;
-        
-        const buttonContainer = document.createElement('div');
-        buttonContainer.className = 'd-flex gap-2';
-        
-        const removeButton = document.createElement('button');
-        removeButton.className = 'btn btn-danger btn-sm';
-        removeButton.textContent = 'Remove';
-        removeButton.onclick = () => {
-            selectedUnits.splice(index, 1);
-            updateForceDisplay();
-            updateCardsDisplay();
-        };
-        
-        buttonContainer.appendChild(removeButton);
-        unitElement.appendChild(nameSpan);
-        unitElement.appendChild(buttonContainer);
-        forceList.appendChild(unitElement);
-    });
-    
-    // Update total points display
-    totalPoints = selectedUnits.reduce((sum, unit) => sum + unit.points, 0);
-    if (totalPointsElement) {
-        totalPointsElement.textContent = totalPoints;
-    }
-    
-    // Update the badge based on points limit
-    if (totalPointsBadge) {
-        if (maxPoints > 0) {
-            if (totalPoints > maxPoints) {
-                const pointsOver = totalPoints - maxPoints;
-                totalPointsBadge.className = 'badge bg-danger';
-                totalPointsBadge.innerHTML = `BFS Total Exceeded! (${pointsOver} over)`;
-            } else {
-                totalPointsBadge.className = 'badge bg-primary';
-                totalPointsBadge.innerHTML = `BFS Total: <span id="totalPoints">${totalPoints}</span>`;
-            }
-        } else {
-            totalPointsBadge.className = 'badge bg-primary';
-            totalPointsBadge.innerHTML = `BFS Total: <span id="totalPoints">${totalPoints}</span>`;
-        }
-    }
-}
-
-// Remove a unit from the force
-function removeUnit(index) {
-    const unit = selectedUnits[index];
-    totalPoints -= unit.points;
-    selectedUnits.splice(index, 1);
-    updateForceDisplay();
-    updateCardsDisplay();
-}
-
-// Update the cards display
-function updateCardsDisplay() {
-    const cardsContainer = document.getElementById('forceList');
-    if (!cardsContainer) return; // Guard against missing element
-    
-    cardsContainer.innerHTML = '';
-    
-    selectedUnits.forEach(unit => {
-        const cardElement = document.createElement('div');
-        cardElement.className = 'card';
+    currentForce.forEach((unit, index) => {
+        const cardDiv = document.createElement('div');
+        cardDiv.className = 'unit-card';
         
         const img = document.createElement('img');
-        img.src = unit.cardPath;
-        img.alt = unit.name;
+        img.src = `Cards/${unit.FullName}.gif`;
+        img.alt = unit.FullName;
         
-        // Add error handling for missing images
-        img.onerror = function() {
-            this.src = 'images/missing-card.gif';
-            this.alt = `${unit.name} (Card not found)`;
-        };
+        const removeButton = document.createElement('button');
+        removeButton.className = 'btn btn-danger btn-sm position-absolute top-0 end-0 m-2';
+        removeButton.innerHTML = '&times;';
+        removeButton.onclick = () => removeUnit(index);
         
-        cardElement.appendChild(img);
-        cardsContainer.appendChild(cardElement);
+        cardDiv.appendChild(img);
+        cardDiv.appendChild(removeButton);
+        forceList.appendChild(cardDiv);
     });
 }
 
-// Print the force
+// Remove unit from force
+function removeUnit(index) {
+    currentForce.splice(index, 1);
+    updateForceList();
+    updateTotalPoints();
+}
+
+// Update total points
+function updateTotalPoints() {
+    const total = currentForce.reduce((sum, unit) => sum + unit.PV, 0);
+    totalPointsSpan.textContent = total;
+    
+    if (total > maxPoints) {
+        totalPointsBadge.classList.remove('bg-primary');
+        totalPointsBadge.classList.add('bg-danger');
+    } else {
+        totalPointsBadge.classList.remove('bg-danger');
+        totalPointsBadge.classList.add('bg-primary');
+    }
+}
+
+// Set scale
+function setScale(scale) {
+    currentScale = scale;
+    document.querySelectorAll('.unit-card').forEach(card => {
+        card.style.transform = `scale(${scale})`;
+    });
+}
+
+// Update max points
+function updateMaxPoints() {
+    maxPoints = parseInt(maxPointsInput.value) || 32;
+    updateTotalPoints();
+}
+
+// Delete force
+function deleteForce() {
+    if (confirm('Are you sure you want to delete the entire force?')) {
+        currentForce = [];
+        updateForceList();
+        updateTotalPoints();
+    }
+}
+
+// Print force
 function printForce() {
-    // Wait for any pending image loads
-    const images = document.querySelectorAll('.card img');
+    // Show loading indicator
+    const loadingDiv = document.createElement('div');
+    loadingDiv.className = 'position-fixed top-50 start-50 translate-middle bg-white p-3 rounded shadow';
+    loadingDiv.innerHTML = `
+        <div class="text-center">
+            <div class="spinner-border text-primary mb-2" role="status">
+                <span class="visually-hidden">Loading...</span>
+            </div>
+            <div>Preparing print layout...</div>
+        </div>
+    `;
+    document.body.appendChild(loadingDiv);
+    
+    // Wait for all images to load
+    const images = document.querySelectorAll('.unit-card img');
     let loadedImages = 0;
-    let totalImages = images.length;
     
-    console.log(`Waiting for ${totalImages} images to load before printing`);
-    
-    if (totalImages === 0) {
-        console.log('No images to load, printing immediately');
-        setTimeout(() => window.print(), 500);
+    if (images.length === 0) {
+        window.print();
+        loadingDiv.remove();
         return;
     }
     
-    // Create a loading indicator
-    const loadingIndicator = document.createElement('div');
-    loadingIndicator.id = 'printLoadingIndicator';
-    loadingIndicator.style.position = 'fixed';
-    loadingIndicator.style.top = '50%';
-    loadingIndicator.style.left = '50%';
-    loadingIndicator.style.transform = 'translate(-50%, -50%)';
-    loadingIndicator.style.padding = '20px';
-    loadingIndicator.style.background = 'rgba(255, 255, 255, 0.8)';
-    loadingIndicator.style.borderRadius = '5px';
-    loadingIndicator.style.boxShadow = '0 0 10px rgba(0,0,0,0.2)';
-    loadingIndicator.style.zIndex = '9999';
-    loadingIndicator.innerHTML = `<div class="text-center"><h4>Preparing print layout...</h4><p>Loading images: <span id="loadingProgress">0/${totalImages}</span></p></div>`;
-    document.body.appendChild(loadingIndicator);
-    
-    // Function to update loading progress
-    const updateProgress = () => {
-        const progressElement = document.getElementById('loadingProgress');
-        if (progressElement) {
-            progressElement.textContent = `${loadedImages}/${totalImages}`;
-        }
-    };
-    
-    // Function to handle printing
-    const handlePrint = () => {
-        console.log('All images loaded, printing now');
-        document.body.removeChild(loadingIndicator);
-        setTimeout(() => window.print(), 500);
-    };
-    
-    // Check each image
     images.forEach(img => {
         if (img.complete) {
             loadedImages++;
-            updateProgress();
-            if (loadedImages === totalImages) {
-                handlePrint();
+            if (loadedImages === images.length) {
+                window.print();
+                loadingDiv.remove();
             }
         } else {
             img.onload = () => {
                 loadedImages++;
-                updateProgress();
-                if (loadedImages === totalImages) {
-                    handlePrint();
+                if (loadedImages === images.length) {
+                    window.print();
+                    loadingDiv.remove();
                 }
             };
             img.onerror = () => {
-                console.log(`Error loading image: ${img.src}`);
                 loadedImages++;
-                updateProgress();
-                if (loadedImages === totalImages) {
-                    handlePrint();
+                if (loadedImages === images.length) {
+                    window.print();
+                    loadingDiv.remove();
                 }
             };
         }
@@ -305,50 +218,10 @@ function printForce() {
     
     // Fallback in case some images don't trigger onload
     setTimeout(() => {
-        if (document.body.contains(loadingIndicator)) {
-            console.log('Timeout reached, printing anyway');
-            handlePrint();
-        }
-    }, 10000); // 10 second timeout
+        window.print();
+        loadingDiv.remove();
+    }, 10000);
 }
 
-// Set maximum points and update button states
-function setMaxPoints(points) {
-    const maxPointsInput = document.getElementById('maxPoints');
-    maxPointsInput.value = points;
-    
-    // Update button states
-    document.getElementById('scale1').classList.remove('active');
-    document.getElementById('scale2').classList.remove('active');
-    document.getElementById('scale3').classList.remove('active');
-    
-    if (points === 32) {
-        document.getElementById('scale1').classList.add('active');
-    } else if (points === 64) {
-        document.getElementById('scale2').classList.add('active');
-    } else if (points === 96) {
-        document.getElementById('scale3').classList.add('active');
-    }
-    
-    updateForceDisplay();
-}
-
-// Update version number
-function updateVersion() {
-    const versionElement = document.querySelector('.version');
-    if (versionElement) {
-        const currentVersion = parseFloat(versionElement.textContent.replace('Version ', ''));
-        versionElement.textContent = `Version ${(currentVersion + 0.01).toFixed(2)}`;
-    }
-}
-
-document.getElementById('deleteForce').addEventListener('click', function() {
-    if (confirm('Are you sure you want to delete the entire force?')) {
-        selectedUnits = [];
-        updateForceDisplay();
-        updateTotalPoints();
-        // Clear the preview cards
-        const forceList = document.getElementById('forceList');
-        forceList.innerHTML = '';
-    }
-}); 
+// Initialize on load
+document.addEventListener('DOMContentLoaded', init); 
