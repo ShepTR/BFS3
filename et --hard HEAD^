@@ -1,0 +1,5 @@
+[33mcommit 9b0f490633a66f3c252419fd9d4ddf7348dc7659[m[33m ([m[1;36mHEAD -> [m[1;32mmain[m[33m, [m[1;31morigin/main[m[33m)[m
+Author: sheptr <sheptr@sheptr.com>
+Date:   Fri Apr 4 22:40:45 2025 -0400
+
+    Update card display to show correct size and orientation (3.5x2.5 inches, rotated 90 degrees)
