@@ -250,15 +250,16 @@ function printForce() {
                 .card-container {
                     display: flex;
                     flex-wrap: wrap;
-                    gap: 0.1in;
+                    gap: 0.5in;
                     justify-content: flex-start;
+                    padding: 0.5in;
                 }
                 .unit-card {
                     width: 3.5in;
                     height: 2.5in;
                     border: 1px solid #ccc;
                     padding: 0.1in;
-                    margin: 0.05in;
+                    margin: 0;
                     text-align: center;
                     page-break-inside: avoid;
                     transform: rotate(90deg);
@@ -266,6 +267,7 @@ function printForce() {
                     position: relative;
                     left: 0;
                     margin-left: 2.5in;
+                    margin-bottom: 0.5in;
                 }
                 .unit-card img {
                     width: 100%;
@@ -275,6 +277,9 @@ function printForce() {
                 @media print {
                     body {
                         padding: 0;
+                    }
+                    .card-container {
+                        padding: 0.5in;
                     }
                 }
             </style>
