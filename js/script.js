@@ -264,11 +264,12 @@ function printForce() {
                     background: white;
                 }
                 .card-container {
-                    display: flex;
-                    flex-wrap: wrap;
-                    gap: 0;
-                    justify-content: flex-start;
-                    padding: 0;
+                    display: grid;
+                    grid-template-columns: repeat(3, 3.5in);
+                    grid-template-rows: repeat(3, 2.5in);
+                    gap: 0.1in;
+                    justify-content: center;
+                    padding: 0.5in;
                     margin: 0;
                 }
                 .unit-card {
@@ -284,7 +285,6 @@ function printForce() {
                     position: relative;
                     left: 0;
                     margin-left: 2.5in;
-                    margin-bottom: 0;
                 }
                 .unit-card img {
                     width: 100%;
@@ -319,7 +319,7 @@ function printForce() {
                         margin: 0;
                     }
                     .card-container {
-                        padding: 0;
+                        padding: 0.5in;
                         margin: 0;
                     }
                 }
