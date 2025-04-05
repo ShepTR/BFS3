@@ -272,6 +272,8 @@ function printForce() {
                     padding: 0;
                     margin: 0;
                     text-align: center;
+                    transform: rotate(90deg);
+                    transform-origin: top left;
                 }
                 .unit-card img {
                     width: 100%;
