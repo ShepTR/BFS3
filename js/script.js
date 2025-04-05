@@ -38,20 +38,26 @@ function populateUnitSelect(unitType) {
     const select = document.getElementById('unitSelect');
     select.innerHTML = '<option value="">Choose a unit...</option>';
     
+    // Map the select value to the correct Type value
+    const typeMapping = {
+        'vehicle': ['Vehicle'],
+        'protomech': ['Protomech'],
+        'battlearmor': ['BattleArmor'],
+        'infantry': ['Infantry']
+    };
+    
+    const correctType = typeMapping[unitType];
+    console.log('Unit type selected:', unitType);
+    console.log('Type mapping:', typeMapping);
+    console.log('Correct type array:', correctType);
+    console.log('First unit in data:', unitData[0]);
+    console.log('First unit type:', unitData[0].UnitType);
+    
     // Filter units based on type
     const filteredUnits = unitData.filter(unit => {
-        switch(unitType) {
-            case 'vehicle':
-                return unit.Type === 'Vehicle';
-            case 'protomech':
-                return unit.Type === 'Protomech';
-            case 'battlearmor':
-                return unit.Type === 'BattleArmor';
-            case 'infantry':
-                return unit.Type === 'Infantry';
-            default:
-                return false;
-        }
+        const matches = correctType.includes(unit.UnitType);
+        console.log('Checking unit:', unit.Name, 'Type:', unit.UnitType, 'Matches:', matches);
+        return matches;
     });
     
     filteredUnits.forEach(unit => {
