@@ -1,0 +1,32 @@
+
+Found 1439 BLK files to process...
+
+Processing BLK files...
+Progress: 100/1439 files (6.9%)
+Progress: 200/1439 files (13.9%)
+Progress: 300/1439 files (20.8%)
+Progress: 400/1439 files (27.8%)
+Progress: 500/1439 files (34.7%)
+Progress: 600/1439 files (41.7%)
+Progress: 700/1439 files (48.6%)
+Progress: 800/1439 files (55.6%)
+Progress: 900/1439 files (62.5%)
+Progress: 1000/1439 files (69.5%)
+Progress: 1100/1439 files (76.4%)
+Progress: 1200/1439 files (83.4%)
+Progress: 1300/1439 files (90.3%)
+Progress: 1400/1439 files (97.3%)
+
+Writing data to CSV file...
+
+Validating CSV output...
+Validating: 100/1439 files (6.9%)
+Validating: 200/1439 files (13.9%)
+Validating: 300/1439 files (20.8%)
+Validating: 400/1439 files (27.8%)
+Validating: 500/1439 files (34.7%)
+Validating: 600/1439 files (41.7%)
+Validating: 700/1439 files (48.6%)
+Validating: 800/1439 files (55.6%)
+Validating: 900/1439 files (62.5%)
+Validating: 1000/1439 files (69.5%)
