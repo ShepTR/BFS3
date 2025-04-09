@@ -84,15 +84,15 @@ function init() {
 
     console.log('Scale buttons initialized');
 
-    // Set initial unit type to vehicle and load units
-    unitTypeSelect.value = "vehicle";
+    // Set initial unit type to common and load units
+    unitTypeSelect.value = "common";
     updateUnitList();
     
     console.log('Initial unit list updated');
     
     // Select the first unit in the list
-    if (unitSelect.options.length > 1) { // Check if there are units available
-        unitSelect.selectedIndex = 1; // Select the first unit (index 0 is the placeholder)
+    if (unitSelect.options.length > 0) { // Check if there are units available
+        unitSelect.selectedIndex = 0; // Select the first unit
         updateCardPreview(); // Update the card preview
         console.log('First unit selected and preview updated');
     }
@@ -131,6 +131,9 @@ function updateUnitList() {
     
     // Filter units by type and sort by name
     const filteredUnits = units.filter(unit => {
+        if (selectedType === 'common') {
+            return unit.Common === '!';
+        }
         // Convert both to lowercase for comparison
         const unitType = unit.UnitType.toLowerCase();
         const selectedTypeLower = selectedType.toLowerCase();
