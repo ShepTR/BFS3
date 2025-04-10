@@ -16,34 +16,20 @@ const unitIdentifiers = {
 
 // Initialize play force functionality
 function initPlayForce() {
-    const playForceButton = document.getElementById('playForce');
-    
-    if (!playForceButton) {
-        console.error('Play force button not found');
-        return;
+    const playForceBtn = document.getElementById('playForce');
+    if (playForceBtn) {
+        playForceBtn.addEventListener('click', () => {
+            console.log('Play Force button clicked. Current force length:', currentForce.length);
+            
+            // Store the force data in localStorage instead of passing it in the URL
+            localStorage.setItem('playForceData', JSON.stringify(currentForce));
+            
+            // Open the play force page in a new tab
+            window.open('playForce.html', '_blank');
+        });
+    } else {
+        console.error('Play Force button not found');
     }
-    
-    playForceButton.addEventListener('click', () => {
-        // Get the current force from the global variable
-        const currentForce = window.currentForce || [];
-        
-        // Log for debugging
-        console.log('Current force:', currentForce);
-        console.log('Opening play force with', currentForce.length, 'units');
-        console.log('Force data:', JSON.stringify(currentForce));
-        
-        // Create a new window with the play force page
-        const url = 'playForce.html?force=' + encodeURIComponent(JSON.stringify(currentForce));
-        console.log('Opening URL:', url);
-        
-        const playWindow = window.open(url, '_blank');
-        if (!playWindow) {
-            alert('Please allow popups for this site to open the play force view.');
-            return;
-        }
-    });
-    
-    console.log('Play force functionality initialized');
 }
 
 // Export functions for use in other files

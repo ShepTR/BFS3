@@ -14,29 +14,22 @@ const unitIdentifiers = {
     'Z': 'Zulu'
 };
 
-// Get the current force from the URL parameters
+// Function to get current force from localStorage
 function getCurrentForce() {
-    const urlParams = new URLSearchParams(window.location.search);
-    console.log('URL search params:', window.location.search);
-    
-    const forceParam = urlParams.get('force');
-    console.log('Force parameter:', forceParam);
-    
-    if (forceParam) {
-        try {
-            const decodedForce = decodeURIComponent(forceParam);
-            console.log('Decoded force:', decodedForce);
-            
-            const parsedForce = JSON.parse(decodedForce);
-            console.log('Parsed force:', parsedForce);
-            
-            return parsedForce;
-        } catch (e) {
-            console.error('Error parsing force data:', e);
+    try {
+        const forceData = localStorage.getItem('playForceData');
+        if (!forceData) {
+            console.error('No force data found in localStorage');
             return [];
         }
+        
+        const force = JSON.parse(forceData);
+        console.log('Retrieved force data from localStorage:', force);
+        return force;
+    } catch (error) {
+        console.error('Error retrieving force data from localStorage:', error);
+        return [];
     }
-    return [];
 }
 
 // Store unit data for reference
@@ -276,17 +269,28 @@ function createPlayForce(units) {
     });
 }
 
-// Initialize when the window is ready
-window.onload = function() {
-    console.log('Play force display page loaded');
+// Initialize play force display
+function initPlayForceDisplay() {
+    console.log('Initializing play force display');
     
-    // Get the current force from the URL parameters
-    unitsData = getCurrentForce();
-    console.log('Retrieved force data:', unitsData);
+    // Get the current force from localStorage
+    const force = getCurrentForce();
+    console.log('Current force:', force);
+    
+    if (!force || force.length === 0) {
+        console.error('No force data available');
+        document.getElementById('playForceUnits').innerHTML = '<p>No units available in the force.</p>';
+        return;
+    }
+    
+    // Store unit data for reference
+    unitsData = force;
     
     // Create the play force display
-    createPlayForce(unitsData);
+    createPlayForce(force);
     
-    // Log for debugging
-    console.log('Play force initialized with', unitsData.length, 'units');
-}; 
+    console.log('Play force display initialized');
+}
+
+// Initialize when the DOM is loaded
+document.addEventListener('DOMContentLoaded', initPlayForceDisplay); 
