@@ -39,4 +39,110 @@
         page-break-inside: avoid;
         margin-bottom: 1rem;
     }
+}
+
+/* Play Force Styles */
+#playForceContainer {
+    margin-top: 20px;
+    padding: 20px;
+    background-color: #fff;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.play-force-header {
+    margin-bottom: 20px;
+    padding-bottom: 10px;
+    border-bottom: 2px solid #dee2e6;
+}
+
+.play-force-unit {
+    margin-bottom: 30px;
+    padding: 15px;
+    border: 1px solid #dee2e6;
+    border-radius: 8px;
+    background-color: #f8f9fa;
+}
+
+.play-force-unit img {
+    max-width: 100%;
+    height: auto;
+    margin-bottom: 15px;
+}
+
+.play-force-controls {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+}
+
+.unit-identifier {
+    font-size: 1.2em;
+    font-weight: bold;
+    color: #495057;
+}
+
+.health-counter {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.health-counter button {
+    width: 40px;
+    height: 40px;
+    font-size: 1.5em;
+    border-radius: 50%;
+    border: none;
+    background-color: #007bff;
+    color: white;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background-color 0.2s;
+}
+
+.health-counter button:hover {
+    background-color: #0056b3;
+}
+
+.health-counter button:disabled {
+    background-color: #6c757d;
+    cursor: not-allowed;
+}
+
+.health-value {
+    font-size: 1.5em;
+    font-weight: bold;
+    min-width: 60px;
+    text-align: center;
+}
+
+.destroy-check {
+    margin-top: 10px;
+    padding: 10px;
+    background-color: transparent;
+    color: #333;
+    border-radius: 4px;
+    text-align: center;
+    font-weight: bold;
+    min-height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+@media (max-width: 768px) {
+    .health-counter button {
+        width: 50px;
+        height: 50px;
+        font-size: 1.8em;
+    }
+    
+    .health-value {
+        font-size: 1.8em;
+        min-width: 80px;
+    }
 } 

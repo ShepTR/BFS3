@@ -13,9 +13,11 @@ let totalPointsSpan;
 let deleteForceButton;
 let printForceButton;
 let maxPointsInput;
-let currentForce = [];
 let currentScale = 1;
 let maxPoints = 32;
+
+// Initialize global force array
+window.currentForce = [];
 
 // Initialize
 function init() {
@@ -47,6 +49,10 @@ function init() {
     maxPointsInput.addEventListener('change', updateMaxPoints);
 
     console.log('Event listeners added');
+
+    // Initialize play force functionality
+    initPlayForce();
+    console.log('Play force functionality initialized');
 
     // Scale buttons
     document.getElementById('scale1').addEventListener('click', () => {
